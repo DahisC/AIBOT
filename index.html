@@ -3,11 +3,446 @@
 <head>
 	<title>Homepage</title>
 
+	<style>
+		div {
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+
+		button {
+			width: 100%;
+		}
+
+	</style>
+
 	<link rel="stylesheet" href="bootstrap.css" type="text/css"/>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+		var socket = io();
+	</script>
+
 </head>
 <body>
 
-	<input id="btn_patchnote" class="btn btn-success" type="button" value="更新日誌">
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 上方快捷列 -->
+			<div class="col-md-12">
+
+				<div class="col-md-1">
+					<button type="button" class="btn btn-link"><a href="https://goo.gl/65ge1G" target="_blank">上架表單</a></button>
+				</div>
+
+				<div class="col-md-1">
+					<button type="button" class="btn btn-link"><a href="https://goo.gl/AVYAcx" target="_blank">原始表單</a></button>
+				</div>
+
+				<div class="col-md-4">
+					<button id="btn_template" type="button" class="btn btn-primary" onclick="createTemplate()">建立樣板</button>
+				</div>
+
+				<div class="col-md-6">
+					<button id="btn_launch" type="button" class="btn btn-danger" onclick="startLaunch()">上架</button>
+				</div>
+				
+			</div>
+			<!-- 左側版面 -->
+			<div class="col-md-6">
+
+				<div class="col-md-12">
+					<!-- 上架產品清單 -->
+					<select id="selectList" class="form-control" ondblclick="importSelectList()"></select>
+				</div>
+
+				<script>
+					function importSelectList() {
+						socket.emit('importSelectList');
+					};
+
+					socket.on('getList', function(launchList) {
+						addSelectList(launchList);
+						getInfo(launchList);
+					});
+				</script>
+
+				<div class="col-md-12">
+
+					<!--  -->
+
+					<div class="col-md-8">
+						<label class="control-label" for="_name">商品名稱</label>
+						<input id="_name" type="text" class="form-control" placeholder="MacBook Pro">
+					</div>
+
+					<div class="col-md-4">
+						<label class="control-label" for="_brand">品牌</label>
+						<input id="_brand" type="text" class="form-control" placeholder="Apple">
+					</div>
+
+					<!--  -->
+
+					<div class="col-md-8">
+						<label class="control-label" for="_intro">商品簡介</label>
+						<input id="_intro" type="text" class="form-control" placeholder="一身才華， 一觸， 即發。">
+					</div>
+
+					<div class="col-md-2">
+						<label class="control-label" for="_mprice">市價</label>
+						<input id="_mprice" type="text" class="form-control" placeholder="92200">
+					</div>
+
+					<div class="col-md-2">
+						<label class="control-label" for="_price">售價</label>
+						<input id="_price" type="text" class="form-control" placeholder="90000">
+					</div>
+
+					<!--  -->
+
+					<div class="col-md-4">
+						<label class="control-label" for="_image1">商品圖片（主圖）</label>
+						<input id="_image1" type="text" class="form-control" placeholder="https://imageshack.us/">
+					</div>
+
+					<div class="col-md-4">
+						<label class="control-label" for="_image2">商品圖片</label>
+						<input id="_image2" type="text" class="form-control" placeholder="https://imageshack.us/">
+					</div>
+
+					<div class="col-md-4">
+						<label class="control-label" for="_image3">商品圖片</label>
+						<input id="_image3" type="text" class="form-control" placeholder="https://imageshack.us/">
+					</div>
+
+				</div>
+
+				<div class="col-md-12">
+					<!--  -->
+<!-- 					<div class="col-md-3">
+						<button id="addVideo" type="button" class="btn btn-success" onclick="addVideo()">插入影片</button>
+					</div> -->
+
+					<div class="col-md-4">
+						<button id="addImage" type="button" class="btn btn-success" onclick="addImage()">插入圖片</button>
+					</div>
+
+					<div class="col-md-4">
+						<button id="addTitle" type="button" class="btn btn-success" onclick="addTitle()">插入標題</button>
+					</div>
+
+					<div class="col-md-4">
+						<button id="addContent" type="button" class="btn btn-success" onclick="addContent()">插入內文</button>
+					</div>
+
+				</div>
+
+				<div id="editVideo" class="col-md-12">
+					<input id="_video" type="text" class="form-control" placeholder="輸入 Youtube 影片網址" onclick="editVideo()">
+				</div>
+
+				<div id="editMode" class="col-md-12">
+					<!-- 程式寫入區塊 -->
+				</div>
+
+			</div>
+			<!-- 右側板面 -->
+			<div id="AITB_product" class="col-md-6">
+				<div id="AITB_warranty" class="col-md-12"><img src="http://i.imgur.com/F7IDrIa.png" style="width: 100%;"><p class="content">本產品自海外直接進口，本店提供 3 個月免費保固，期間非人為損傷可直接替換新品或免費送修。</p><p class="content">可開立發票與統編。</p><hr></div><div id="AITB_video" class="col-md-12"></div><hr><div id="AITB_content" class="col-md-12"></div><hr><div id="AITB_statment" class="col-md-12"><p class="title">下標前叮嚀</p><p class="content">因為庫存狀況不一，請您於下標前先參照「關於我」以及於問與答中確認是否還有商品庫存。</p><p class="title"> 寄送時間 </p><p class="content">現貨商品將於下標結帳後，宅配或超商寄出。約於下標後 2 天內寄出，3-4 天內抵達。</p><p class="content">若為預購商品，等候時間以本店公布時間為準；到貨後可能回自台灣或海外直接寄出予買家。</p><p class="title">退貨或換貨</p><p class="content">若商品於到貨後本身有瑕疵（非人為因素造成之損傷或損壞），我們將受理退貨或換新品之要求。</p><p class="title">商品猶豫期</p><p class="content">商品到貨後七天內您享有商品猶豫期（非試用期），但只限於商品包裝保持未拆封且未使用的情況下。</p><p class="content">若您於期間內決定不購買，可將商品寄回，我們會在收到商品並確認後將款項退回。若已經拆封、使用，本店將視情況酌收整新處理費。</p></div>
+			</div>
+	</div>
+
+	<script>
+
+		function addSelectList(rows) {
+			alert("匯入 "+rows.length+" 筆未上架商品資料");
+			$('#selectList').empty();
+			$('#selectList').append('<option>選擇上架產品</option>');
+			for (i=0; i<rows.length; i++) {
+				$('#selectList').append('<option>'+rows[i].name+'</option>');
+				$('#selectList option').last().attr('id', i);
+			}
+		}
+
+		var currentProductInfo;
+		function getInfo(rows) {
+			$('#selectList').change(function() {
+				var arrayNo = $('#selectList option:selected').attr('id');
+				$('#_name').val(rows[arrayNo].name);
+				$('#_brand').val(rows[arrayNo].brand);
+				$('#_mprice').val(rows[arrayNo].mprice);
+				$('#_price').val(rows[arrayNo].price);
+				currentProductInfo = rows[arrayNo];
+			});
+		}
+
+		function startLaunch() {
+			function productObj(product, image1, image2, image3, intro, video, code, rycode, providerID, warrantyID, rutenA, rutenB) {
+				this.launched = product.launched;
+				this.anyspecs = product.anyspecs;
+				this.yohotw = product.yohotw;
+				this.ruten = product.ruten;
+				this.yahoo = product.yahoo;
+				this.shopee = product.shopee;
+				this.price = product.price;
+				this.mprice = product.mprice;
+				this.brand = product.brand;
+				this.no = product.no;
+				this.name = product.name;
+				this.image1 = image1;
+				this.image2 = image2;
+				this.image3 = image3;
+				this.intro = intro;
+				this.video = video;
+				this.code = code;
+				this.rycode = rycode;
+				this.provider = providerID;
+				this.warranty = warrantyID;
+				this.rutenA = rutenA;
+				this.rutenB = rutenB;
+			}
+
+			var providerID = currentProductInfo.provider,
+				providerID = providerID.split(" - "),
+				providerID = providerID[0];
+
+			var warrantyID = currentProductInfo.warranty,
+				warrantyID = warrantyID.split(" - "),
+				warrantyID = warrantyID[0];
+
+			var checkValue = 0;
+
+			var pImage1 = $('input#_image1').val(),
+				pImage2 = $('input#_image2').val(),
+				pImage3 = $('input#_image3').val();
+
+			var pIntro = $('input#_intro').val();
+
+			var pVideo = $('input#_video').val();
+				if (pVideo == "" || pVideo == undefined || pVideo == null) {
+					alert("缺少商品影片");
+				}
+				else {
+					pVideo = pVideo.split("="),
+					pVideo = pVideo[1],
+					pVideo = "https://youtu.be/"+pVideo;
+					checkValue++;
+				}
+
+			var pCode = $('div#AITB_content').html();
+			// var warranty = $('div#AITB_warranty').html(),
+			// 	statment = $('div#AITB_statment').html(),
+			// 	pRYCode = warranty + pCode + statment;
+			var test = $('div#AITB_product').html();
+			var pRYCode = $.trim(test);
+
+			var rutenClass = currentProductInfo.rutenclass;
+				rutenClass = rutenClass.split(" - ");
+			var rutenA = rutenClass[0];
+			var rutenB = rutenClass[0] + rutenClass[1];
+
+			var _product = new productObj(currentProductInfo, pImage1, pImage2, pImage3, pIntro, pVideo, pCode, pRYCode, providerID, warrantyID, rutenA, rutenB);
+
+			(pImage1 == "" || pImage1 == undefined || pImage1 == null) ? alert("缺少商品圖片一") : checkValue++;
+			(pImage2 == "" || pImage2 == undefined || pImage2 == null) ? alert("缺少商品圖片二") : checkValue++;
+			(pImage3 == "" || pImage3 == undefined || pImage3 == null) ? alert("缺少商品圖片三") : checkValue++;
+			(pIntro == "" || pIntro == undefined || pIntro == null) ? alert("缺少商品簡介") : checkValue++;
+			//(pVideo == "" || pVideo == undefined || pVideo == null) ? alert("缺少商品影片") : "";
+
+			(checkValue === 5) ? socket.emit('startLaunch', _product) : "";
+		}
+
+		//
+
+		$(document).ready(function() {
+			appendCSS();
+		});
+
+		function appendCSS() {
+			$('*')
+				.css('font-family', 'Microsoft YaHei');
+
+			$('#AITB_video iframe, #AITB_content img')
+				.css('width', "100%");
+
+			$('#AITB_product p.title')
+				.css('font-size', "110%")
+				.css('font-weight', "bold")
+				.css('color', "LightCoral")
+				.css('margin', "10px");
+
+			$('#AITB_product p.content')
+				.css('font-size', "110%")
+				.css('font-weight', "bold")
+				.css('color', "Black")
+				.css('margin', "10px");
+
+			$('#AITB_product h4')
+				.css('font-size', "120%")
+				.css('font-weight', "bold")
+				.css('color', "LightSkyBlue")
+				.css('margin', "10px");
+
+			$('#AITB_product h5')
+				.css('font-size', "110%")
+				.css('color', "grey")
+				.css('margin', "10px")
+				.css('margin-left', "50px");
+
+			$('#AITB_product h4, #AITB_product h5, #AITB_product img, #AITB_product iframe')
+				.css('margin-top', "20px")
+				.css('margin-bottom', "20px");
+
+		};
+
+
+		// var videoIndex = 0;
+		// function addVideo() {
+		// 	$('#editMode').append('<input>');
+		// 		$('#editMode input').last()
+		// 			.attr('id', "video"+videoIndex)
+		// 			.attr('class', "form-control")
+		// 			.attr('placeholder', "產品影片 "+videoIndex+" - 輸入含有 <iframe> 標籤的 Youtube 嵌入碼")
+		// 			.attr('ondblclick', "editDelete()")
+		// 			.attr('onchange', "editChange()");
+
+		// 	$('#AITB_content').append('<div></div');
+		// 		$('#AITB_content div').last()
+		// 			.attr('id', "_video"+videoIndex);
+		// 	videoIndex++;
+		// }
+
+		var imageIndex = 0;
+		function addImage() {
+			$('#editMode').append('<input>');
+				$('#editMode input').last()
+					.attr('id', "image"+imageIndex)
+					.attr('class', "form-control")
+					.attr('placeholder', "產品圖片 "+imageIndex)
+					.attr('ondblclick', "editDelete()")
+					.attr('onchange', "editChange()");
+			
+			$('#AITB_content').append('<img>')
+				$('#AITB_content img').last()
+					.attr('id', "_image"+imageIndex);
+
+			imageIndex++;	
+		}
+
+		var titleIndex = 0;
+		function addTitle() {
+			$('#editMode').append('<input>');
+				$('#editMode input').last()
+					.attr('id', "title"+titleIndex)
+					.attr('class', "form-control")
+					.attr('placeholder', "產品標題 "+titleIndex)
+					.attr('ondblclick', "editDelete()")
+					.attr('onchange', "editChange()");
+
+			$('#AITB_content').append('<h4></h4>')
+				$('#AITB_content h4').last()
+					.attr('id', "_title"+titleIndex);
+
+			titleIndex++;
+		}
+
+		var contentIndex = 0;
+		function addContent() {
+			$('#editMode').append('<input>');
+				$('#editMode input').last()
+					.attr('id', "content"+contentIndex)
+					.attr('class', "form-control")
+					.attr('placeholder', "產品內文 "+contentIndex)
+					.attr('ondblclick', "editDelete()")
+					.attr('onchange', "editChange()");
+
+			$('#AITB_content').append('<h5></h5>')
+				$('#AITB_content h5').last()
+					.attr('id', "_content"+contentIndex);
+
+			contentIndex++;
+		}
+
+		function editDelete() {
+			var id = $(event.target).attr('id');
+			var confirmed = confirm("刪除？");
+			if (confirmed) {$('#'+id).remove(); $('#_'+id).remove();}
+		}
+
+		function editChange() {
+			var target = event.target;
+			var id = $(target).attr('id');
+
+			(id.indexOf("video") > -1) ? $('#AITB_video').html($(target).val()) :
+				(id.indexOf("image") > -1) ? $('#_'+id).attr('src', ($(target).val())) : $('#_'+id).text($(target).val());
+			appendCSS();
+		}
+
+		function editVideo() {
+			var link = $('input#_video').val();
+			var source = link.split("=");
+			source = source[1];
+
+			var embed = '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+source+'" frameborder="0" allowfullscreen></iframe>'
+			$('#AITB_video').html(embed);
+		}
+
+		var template = false;
+		function createTemplate() {
+			
+			if (!template) {
+				addTitle();
+				addContent();
+				addImage();
+				setTemplateInput();
+				template = true;
+			} 
+			else {
+				setTemplateInput();
+			}
+		}
+
+		function setTemplateInput() {
+			// 影片網址
+			let video = 'https://www.youtube.com/watch?v=2C0V9d6HVRo';
+			$('input#_video').val(video);
+
+			$('#AITB_video').html(video);
+			//
+			let title0 = "全天候即時視訊",
+				content0 = "不論白天還是晚上，你都能透過 130º 的寬廣視角和 1080p HD 高畫質畫面監視居家周圍的任何動靜。此外，攝影機、電線和轉接器全都無懼風吹日曬，也完全不必擔心電池沒電，讓你擁有前所未有的安心感受。"
+				image0 = "http://i.imgur.com/lZ2BnCP.jpg"
+
+			$('input#title0').val(title0);
+			$('input#content0').val(content0);
+			$('input#image0').val(image0);
+
+			$('#_title0').text(title0);
+			$('#_content0').text(content0);
+			$('#_image0').attr('src', image0);
+
+			//
+
+			let intro = "不論白天還是晚上，你都能透過 130º 的寬廣視角和 1080p HD 高畫質畫面監視居家周圍的任何動靜。此外，攝影機、電線和轉接器全都無懼風吹日曬，也完全不必擔心電池沒電，讓你擁有前所未有的安心感受。";
+			$('input#_intro').val(intro);
+
+			//
+
+			let image1 = "http://i.imgur.com/BbTyYb1.jpg",
+				image2 = "http://i.imgur.com/6tzRo0D.jpg",
+				image3 = "http://i.imgur.com/Vo81tHo.jpg";
+
+
+			$('input#_image1').val(image1);
+			$('input#_image2').val(image2);
+			$('input#_image3').val(image3);
+
+			appendCSS();
+
+			//
+		}
+	</script>
 
 </body>
 </html>
