@@ -48,8 +48,6 @@ exports.getSheet = function(callback) {
 
 exports.writeIn = function(header, value, product) {
 
-	console.log("將 "+value+" 寫入 "+header+" 中...");
-
 	async.series([
 
 		function setAuth(step) {
@@ -85,7 +83,21 @@ exports.writeIn = function(header, value, product) {
 				'return-empty': true
 			},	function(err, cells) {
 				var cell = cells[0];
-				cell.setValue(value, null);
+				var formula = '=HYPERLINK("'+value+'","商品頁面")';
+
+				if (header == "anyspecs" || header == "ruten" || header == "yahoo" || header == "shopee") {
+					console.log("將網址 "+value+" 寫入儲存格 "+header+" 中...");
+					cell.setValue(formula, null);
+				} 
+				else if (header == "yohotw") {
+					console.log("將編號 "+value+" 寫入儲存格 "+header+" 中...");
+					cell.setValue(value, null);
+				}
+				else {
+					console.log(value+" - 商品 "+product.name+" 上架完成。")
+					cell.setValue(value, null);
+				}
+
 			});
 		}
 
