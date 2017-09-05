@@ -87,7 +87,11 @@ exports.writeIn = function(header, value, product) {
 				var cell = cells[0];
 				var formula = '=HYPERLINK("'+value+'","商品頁面")';
 
+<<<<<<< HEAD
 				if (header == "anyspecs" || header == "ruten" || header == "yahoo" || header == "shopee" || header == "pchome") {
+=======
+				if (header == "anyspecs" || header == "ruten" || header == "yahoo" || header == "shopee") {
+>>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 					console.log("將網址 "+value+" 寫入儲存格 "+header+" 中...");
 					cell.setValue(formula, null);
 				} 
@@ -95,10 +99,13 @@ exports.writeIn = function(header, value, product) {
 					console.log("將編號 "+value+" 寫入儲存格 "+header+" 中...");
 					cell.setValue(value, null);
 				}
+<<<<<<< HEAD
 				else if (header == "storage") {
 					console.log("雲端小幫手庫存建立完成");
 					cell.setValue(value, null);
 				}
+=======
+>>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 				else {
 					console.log(value+" - 商品 "+product.name+" 上架完成。")
 					cell.setValue(value, null);

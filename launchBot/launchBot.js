@@ -63,6 +63,8 @@ exports.saveImage = function(product) {
 
 exports.launching = function(product) {
 
+	console.log(product);
+
 	var _product = product;
 
 	function getTime() {
@@ -97,6 +99,7 @@ exports.launching = function(product) {
 	}
 
 	function checkShopee() {
+<<<<<<< HEAD
 		(product.shopee == "") ? launchShopee(product, function() {checkPCHome(); }) : checkPCHome();
 	}
 
@@ -106,6 +109,9 @@ exports.launching = function(product) {
 
 	function checkStorage() {
 		(product.storage == "") ? createStorage(product, function() {completeLaunch(); }) : completeLaunch();
+=======
+		(product.shopee == "") ? launchShopee(product, function() {completeLaunch(); }) : completeLaunch();
+>>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 	}
 
 	function completeLaunch() {
@@ -518,6 +524,11 @@ exports.launching = function(product) {
 
 			function startLaunch(step) {
 
+<<<<<<< HEAD
+=======
+				console.log(product.spcode);
+
+>>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 				console.log("正在將商品 "+product.name+" 上架到 Shopee...");
 				// 新增商品頁面
 				driver.get('https://seller.shopee.tw/portal/product/new');
@@ -556,12 +567,21 @@ exports.launching = function(product) {
 				driver.sleep(2000);
 				// 寫死為 3C
 				driver.findElement(By.xpath('//div[2]/div[12]/div')).click();
+<<<<<<< HEAD
 
 				// 商品品牌
 				driver.sleep(2000);
 				driver.findElement(By.css('div#product-attributes input'))
 					.sendKeys(product.brand);
 
+=======
+
+				// 商品品牌
+				driver.sleep(2000);
+				driver.findElement(By.css('div#product-attributes input'))
+					.sendKeys(product.brand);
+
+>>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 				// 商品價格 form.ember-view div.container:nth-child(5) input[type="text"]
 				driver.findElement(By.css('form.ember-view div.container:nth-child(5) input[type="text"]'))
 					.sendKeys(product.price);
