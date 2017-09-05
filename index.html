@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Homepage</title>
+	<title>Ai-Tec 上架機器人 | V1.0</title>
 
 	<style>
 		div {
@@ -91,12 +91,12 @@
 
 					<div class="col-md-2">
 						<label class="control-label" for="_mprice">市價</label>
-						<input id="_mprice" type="text" class="form-control" placeholder="92200">
+						<input id="_mprice" type="text" class="form-control" placeholder="市場價格（無指定價格時不需輸入）">
 					</div>
 
 					<div class="col-md-2">
 						<label class="control-label" for="_price">售價</label>
-						<input id="_price" type="text" class="form-control" placeholder="90000">
+						<input id="_price" type="text" class="form-control" placeholder="販售價格（從表單更改）">
 					</div>
 
 					<!--  -->
@@ -120,26 +120,26 @@
 
 				<div class="col-md-12">
 					<!--  -->
-<!-- 					<div class="col-md-3">
+					<div class="col-md-3">
 						<button id="addVideo" type="button" class="btn btn-success" onclick="addVideo()">插入影片</button>
-					</div> -->
+					</div>
 
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<button id="addImage" type="button" class="btn btn-success" onclick="addImage()">插入圖片</button>
 					</div>
 
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<button id="addTitle" type="button" class="btn btn-success" onclick="addTitle()">插入標題</button>
 					</div>
 
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<button id="addContent" type="button" class="btn btn-success" onclick="addContent()">插入內文</button>
 					</div>
 
 				</div>
 
-				<div id="editVideo" class="col-md-12">
-					<input id="_video" type="text" class="form-control" placeholder="輸入 Youtube 影片網址" onclick="editVideo()">
+				<div class="col-md-12">
+					<textarea id="_srcCode" class="form-control" placeholder="如此處填入原始碼，則會依原始碼內容上架"></textarea>
 				</div>
 
 				<div id="editMode" class="col-md-12">
@@ -149,7 +149,7 @@
 			</div>
 			<!-- 右側板面 -->
 			<div id="AITB_product" class="col-md-6">
-				<div id="AITB_warranty" class="col-md-12"><img src="http://i.imgur.com/F7IDrIa.png" style="width: 100%;"><p class="content">本產品自海外直接進口，本店提供 3 個月免費保固，期間非人為損傷可直接替換新品或免費送修。</p><p class="content">可開立發票與統編。</p><hr></div><div id="AITB_video" class="col-md-12"></div><hr><div id="AITB_content" class="col-md-12"></div><hr><div id="AITB_statment" class="col-md-12"><p class="title">下標前叮嚀</p><p class="content">因為庫存狀況不一，請您於下標前先參照「關於我」以及於問與答中確認是否還有商品庫存。</p><p class="title"> 寄送時間 </p><p class="content">現貨商品將於下標結帳後，宅配或超商寄出。約於下標後 2 天內寄出，3-4 天內抵達。</p><p class="content">若為預購商品，等候時間以本店公布時間為準；到貨後可能回自台灣或海外直接寄出予買家。</p><p class="title">退貨或換貨</p><p class="content">若商品於到貨後本身有瑕疵（非人為因素造成之損傷或損壞），我們將受理退貨或換新品之要求。</p><p class="title">商品猶豫期</p><p class="content">商品到貨後七天內您享有商品猶豫期（非試用期），但只限於商品包裝保持未拆封且未使用的情況下。</p><p class="content">若您於期間內決定不購買，可將商品寄回，我們會在收到商品並確認後將款項退回。若已經拆封、使用，本店將視情況酌收整新處理費。</p></div>
+				<div id="AITB_warranty" class="col-md-12"><img src="http://imageshack.com/a/img834/9688/4w7v.png" style="width: 100%;"><p class="content">本產品自海外直接進口，本店提供 3 個月免費保固，期間非人為損傷可直接替換新品或免費送修。</p><p class="content">可開立發票與統編。</p><hr></div><div id="AITB_video" class="col-md-12"></div><hr><div id="AITB_content" class="col-md-12"></div><hr><div id="AITB_statment" class="col-md-12"><p class="title">下標前叮嚀</p><p class="content">因為庫存狀況不一，請您於下標前先參照「關於我」以及於問與答中確認是否還有商品庫存。</p><p class="title"> 寄送時間 </p><p class="content">現貨商品將於下標結帳後，宅配或超商寄出。約於下標後 2 天內寄出，3-4 天內抵達。</p><p class="content">若為預購商品，等候時間以本店公布時間為準；到貨後可能回自台灣或海外直接寄出予買家。</p><p class="title">退貨或換貨</p><p class="content">若商品於到貨後本身有瑕疵（非人為因素造成之損傷或損壞），我們將受理退貨或換新品之要求。</p><p class="title">商品猶豫期</p><p class="content">商品到貨後七天內您享有商品猶豫期（非試用期），但只限於商品包裝保持未拆封且未使用的情況下。</p><p class="content">若您於期間內決定不購買，可將商品寄回，我們會在收到商品並確認後將款項退回。若已經拆封、使用，本店將視情況酌收整新處理費。</p></div>
 			</div>
 	</div>
 
@@ -178,15 +178,15 @@
 		}
 
 		function startLaunch() {
-			function productObj(product, image1, image2, image3, intro, video, code, rycode, providerID, warrantyID, rutenA, rutenB) {
+			function productObj(product, image1, image2, image3, intro, video, code, rycode, providerID, warrantyID, rutenA, rutenB, yahooA, yahooB, yahooC, titleArray, contentArray, spcode, shopeeA, shopeeB, yohoA, mprice, pchomeA, pchomeB, pchomeC) {
 				this.launched = product.launched;
 				this.anyspecs = product.anyspecs;
 				this.yohotw = product.yohotw;
 				this.ruten = product.ruten;
 				this.yahoo = product.yahoo;
 				this.shopee = product.shopee;
+				this.pchome = product.pchome;
 				this.price = product.price;
-				this.mprice = product.mprice;
 				this.brand = product.brand;
 				this.no = product.no;
 				this.name = product.name;
@@ -201,6 +201,21 @@
 				this.warranty = warrantyID;
 				this.rutenA = rutenA;
 				this.rutenB = rutenB;
+				this.yahooA = yahooA;
+				this.yahooB = yahooB;
+				this.yahooC = yahooC;
+				this.titleArray = titleArray;
+				this.contentArray = contentArray;
+				this.spcode = spcode;
+				this.shopeeA = shopeeA;
+				this.shopeeB = shopeeB;
+				this.yohoA = yohoA;
+				this.mprice = mprice;
+				this.cost = product.cost;
+				this.storage = product.storage;
+				this.pchomeA = pchomeA;
+				this.pchomeB = pchomeB;
+				this.pchomeC = pchomeC;
 			}
 
 			var providerID = currentProductInfo.provider,
@@ -219,22 +234,28 @@
 
 			var pIntro = $('input#_intro').val();
 
-			var pVideo = $('input#_video').val();
-				if (pVideo == "" || pVideo == undefined || pVideo == null) {
-					alert("缺少商品影片");
-				}
-				else {
-					pVideo = pVideo.split("="),
-					pVideo = pVideo[1],
-					pVideo = "https://youtu.be/"+pVideo;
-					checkValue++;
-				}
+			var pVideo = $('input#video0').val() || 0;
+			if (pVideo !== 0) {
+				pVideo = pVideo.split('/');
+				pVideo = pVideo[4];
+				pVideo = pVideo.split(' ');
+				pVideo = pVideo[0];
+				pVideo = pVideo.replace(/"/, '');
+			}
 
-			var pCode = $('div#AITB_content').html();
+			var videoCode = $('div#AITB_video').html();
+			var contentCode = $('div#AITB_content').html();
+			var pCode = videoCode + contentCode;
 			// var warranty = $('div#AITB_warranty').html(),
 			// 	statment = $('div#AITB_statment').html(),
 			// 	pRYCode = warranty + pCode + statment;
-			var test = $('div#AITB_product').html();
+			var test;
+			if (($('textarea#_srcCode').val()) != "") {
+				test = $('textarea#_srcCode').val();
+			} else {
+				test = $('div#AITB_product').html();
+			}
+			console.log(test);
 			var pRYCode = $.trim(test);
 
 			var rutenClass = currentProductInfo.rutenclass;
@@ -242,7 +263,61 @@
 			var rutenA = rutenClass[0];
 			var rutenB = rutenClass[0] + rutenClass[1];
 
-			var _product = new productObj(currentProductInfo, pImage1, pImage2, pImage3, pIntro, pVideo, pCode, pRYCode, providerID, warrantyID, rutenA, rutenB);
+			//console.log(currentProductInfo);
+
+			var yohoClass = currentProductInfo.yohoclass;
+				yohoClass = yohoClass.split(" - ");
+			var yohoA = yohoClass[0];
+
+			var yahooClass = currentProductInfo.yahooclass;
+				yahooClass = yahooClass.split(" - ");
+			var yahooA = yahooClass[0];
+			var yahooB = yahooClass[1];
+			var yahooC = yahooClass[2] || "0";
+
+			var shopeeClass = currentProductInfo.shopeeclass;
+				shopeeClass = shopeeClass.split(" - ");
+			var shopeeA = shopeeClass[0];
+			var shopeeB = shopeeClass[1];
+
+			var pchomeClass = currentProductInfo.pchomeclass;
+				pchomeClass = pchomeClass.split(" - ");
+			var pchomeA = pchomeClass[0];
+			var pchomeB = pchomeClass[1];
+			var pchomeC = pchomeClass[2];
+
+			var getTitle = $('.titleVal');
+			var titleArray = [];
+				for (i=0; i < getTitle.length; i++) {
+					titleArray.push($(getTitle[i]).val());
+				}
+
+			var getContent = $('.contentVal');
+			var contentArray = [];
+				for (i=0; i < getContent.length; i++) {
+					contentArray.push($(getContent[i]).val());
+				}
+
+			var getmPrice = $('#_mprice').val();
+			var _mPrice = ((Math.random()/10) + 1.1);
+			var mPrice = getmPrice || Math.floor(currentProductInfo.price * _mPrice);
+			mPrice = mPrice.toString();
+			mPrice = mPrice.split('');
+			mPrice[mPrice.length-2] = "8";
+			mPrice[mPrice.length-1] = "0";
+			mPrice = mPrice.join('');
+
+			var spcode = "歡迎來到 Ai-Tec 智瑞科技\n\n因為品項眾多，無法即時更新庫存狀態，煩請下標前先詢問是否有現貨喔！\n\n\n本店售出物品，除非特價品或二手品，均附 3 個月保固\n\n期間有非人為損壞，將更換良品或免費維修。超出期限或人為損壞，則酌收運費、維修費與處理費。\n\n參考更多本店商品：#aitec\n\n歡迎 FB 搜尋「 Ai Tec 」，關注粉絲團！\n\n\n商品特性：\n\n";
+
+				for (i=0; i < contentArray.length; i++) {
+					spcode = spcode + contentArray[i] + "\n\n";
+				}
+
+				spcode = spcode + "\n下標與運送：\n\n下標前叮嚀：因為庫存狀況不一，下標前可用聊聊確認是否還有現貨。\n\n寄 送 時 間：所有現貨商品將會於下標後 3 個工作天內寄出。\n\n預購與代訂：若商品無現貨，則會於客戶下標後即刻自國外訂購，會先預估抵達時間，惟具體時間以實際為準。\n\n退貨或換貨：若商品於到貨後本身有瑕疵(非人為因素造成)，我們將受理退貨或換新品之要求。\n\n商品猶豫期：商品到貨後七天內您享有商品猶豫期，但只限於商品包裝保持未拆封且未使用的情況下。\n\n\n海外運送：\n\n海外直寄商品下單後，包裹收件人將為商品進口人，須遵守台灣海關所有商品進口相關法令規定。臺灣海關對於金額超過 NT$ 3000 的進口包裹將有可能徵收進口關稅、貨物稅、營業稅，消費者需自行負擔此項費用。\n\n本店沒有辦法預先掌握或控制可能產生之相關費用，消費者需自行與台灣海關聯絡確認相關細節。如果臺灣海關對您的包裹要求徵收稅費，物流公司會與您聯繫，並請您提供個人相關文件進行報關，包含您的身分證正反面影本﹑個案委任書﹑與NCC自用切結書，並在清關完成交付包裹時，向您收取相關稅費。 （關於商品報關所需文件，可跟本店聯繫，本店會盡力協助提供）\n\n若您不願意或無法提供資料，請勿下標訂購。 若您已購買，且物品已寄送；但您不願意提供資料協助清關，恕無法辦理退貨退款，同時您須自行負擔海關可能收取的滯納金與未清關罰款。"
+
+			//console.log(contentArray);
+
+			var _product = new productObj(currentProductInfo, pImage1, pImage2, pImage3, pIntro, pVideo, pCode, pRYCode, providerID, warrantyID, rutenA, rutenB, yahooA, yahooB, yahooC, titleArray, contentArray, spcode, shopeeA, shopeeB, yohoA, mPrice, pchomeA, pchomeB, pchomeC);
 
 			(pImage1 == "" || pImage1 == undefined || pImage1 == null) ? alert("缺少商品圖片一") : checkValue++;
 			(pImage2 == "" || pImage2 == undefined || pImage2 == null) ? alert("缺少商品圖片二") : checkValue++;
@@ -250,7 +325,7 @@
 			(pIntro == "" || pIntro == undefined || pIntro == null) ? alert("缺少商品簡介") : checkValue++;
 			//(pVideo == "" || pVideo == undefined || pVideo == null) ? alert("缺少商品影片") : "";
 
-			(checkValue === 5) ? socket.emit('startLaunch', _product) : "";
+			(checkValue === 4) ? socket.emit('startLaunch', _product) : alert("something is wrong");;
 		}
 
 		//
@@ -297,27 +372,31 @@
 		};
 
 
-		// var videoIndex = 0;
-		// function addVideo() {
-		// 	$('#editMode').append('<input>');
-		// 		$('#editMode input').last()
-		// 			.attr('id', "video"+videoIndex)
-		// 			.attr('class', "form-control")
-		// 			.attr('placeholder', "產品影片 "+videoIndex+" - 輸入含有 <iframe> 標籤的 Youtube 嵌入碼")
-		// 			.attr('ondblclick', "editDelete()")
-		// 			.attr('onchange', "editChange()");
+		var videoIndex = 0;
+		function addVideo() {
+			if (videoIndex === 0) {
+				$('#editMode').append('<input>');
+					$('#editMode input').last()
+						.attr('id', "video"+videoIndex)
+						.attr('class', "form-control")
+						.attr('placeholder', "產品影片 "+videoIndex+" - 輸入含有 <iframe> 標籤的 Youtube 嵌入碼")
+						.attr('ondblclick', "videoDelete()")
+						.attr('onchange', "editChange()");
 
-		// 	$('#AITB_content').append('<div></div');
-		// 		$('#AITB_content div').last()
-		// 			.attr('id', "_video"+videoIndex);
-		// 	videoIndex++;
-		// }
+				$('#AITB_video').append('<div></div');
+				$('#AITB_video div').last()
+					.attr('id', "_video"+videoIndex);
+
+				videoIndex++;
+			} else {
+			}
+		}
 
 		var imageIndex = 0;
 		function addImage() {
 			$('#editMode').append('<input>');
 				$('#editMode input').last()
-					.attr('id', "image"+imageIndex)
+					.attr('id', "img"+imageIndex)
 					.attr('class', "form-control")
 					.attr('placeholder', "產品圖片 "+imageIndex)
 					.attr('ondblclick', "editDelete()")
@@ -325,7 +404,7 @@
 			
 			$('#AITB_content').append('<img>')
 				$('#AITB_content img').last()
-					.attr('id', "_image"+imageIndex);
+					.attr('id', "_img"+imageIndex);
 
 			imageIndex++;	
 		}
@@ -335,7 +414,7 @@
 			$('#editMode').append('<input>');
 				$('#editMode input').last()
 					.attr('id', "title"+titleIndex)
-					.attr('class', "form-control")
+					.attr('class', "form-control titleVal")
 					.attr('placeholder', "產品標題 "+titleIndex)
 					.attr('ondblclick', "editDelete()")
 					.attr('onchange', "editChange()");
@@ -352,7 +431,7 @@
 			$('#editMode').append('<input>');
 				$('#editMode input').last()
 					.attr('id', "content"+contentIndex)
-					.attr('class', "form-control")
+					.attr('class', "form-control contentVal")
 					.attr('placeholder', "產品內文 "+contentIndex)
 					.attr('ondblclick', "editDelete()")
 					.attr('onchange', "editChange()");
@@ -370,23 +449,34 @@
 			if (confirmed) {$('#'+id).remove(); $('#_'+id).remove();}
 		}
 
+		function videoDelete() {
+			var id = $(event.target).attr('id');
+			var confirmed = confirm("刪除？");
+			if (confirmed) {$('#'+id).remove(); $('#_'+id).remove(); videoIndex--;}
+		}
+
 		function editChange() {
 			var target = event.target;
 			var id = $(target).attr('id');
 
-			(id.indexOf("video") > -1) ? $('#AITB_video').html($(target).val()) :
-				(id.indexOf("image") > -1) ? $('#_'+id).attr('src', ($(target).val())) : $('#_'+id).text($(target).val());
+			(id.indexOf("video") > -1) ? $('#_'+id).html($(target).val()) :
+				(id.indexOf("img") > -1) ? $('#_'+id).attr('src', ($(target).val())) : $('#_'+id).text($(target).val());
 			appendCSS();
 		}
 
-		function editVideo() {
-			var link = $('input#_video').val();
-			var source = link.split("=");
-			source = source[1];
+		// function editVideo() {
+		// 	var link = $('input#_video').val();
+		// 	if (link != "-1") {
+		// 		var source = link.split("=");
+		// 		source = source[1];
 
-			var embed = '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+source+'" frameborder="0" allowfullscreen></iframe>'
-			$('#AITB_video').html(embed);
-		}
+		// 		var embed = '<iframe width="100%" height="315" src="https://www.youtube.com/embed/'+source+'" frameborder="0" allowfullscreen></iframe>'
+		// 		$('#AITB_video').html(embed);	
+		// 	}
+		// 	else if (link == "-1") {
+		// 		$('iframe').remove();
+		// 	}
+		// }
 
 		var template = false;
 		function createTemplate() {
