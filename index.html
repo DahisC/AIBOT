@@ -138,13 +138,10 @@
 
 				</div>
 
-<<<<<<< HEAD
 				<div class="col-md-12">
 					<textarea id="_srcCode" class="form-control" placeholder="如此處填入原始碼，則會依原始碼內容上架"></textarea>
 				</div>
 
-=======
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 				<div id="editMode" class="col-md-12">
 					<!-- 程式寫入區塊 -->
 				</div>
@@ -181,11 +178,7 @@
 		}
 
 		function startLaunch() {
-<<<<<<< HEAD
 			function productObj(product, image1, image2, image3, intro, video, code, rycode, providerID, warrantyID, rutenA, rutenB, yahooA, yahooB, yahooC, titleArray, contentArray, spcode, shopeeA, shopeeB, yohoA, mprice, pchomeA, pchomeB, pchomeC) {
-=======
-			function productObj(product, image1, image2, image3, intro, video, code, rycode, providerID, warrantyID, rutenA, rutenB, yahooA, yahooB, yahooC, titleArray, contentArray, spcode, shopeeA, shopeeB) {
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 				this.launched = product.launched;
 				this.anyspecs = product.anyspecs;
 				this.yohotw = product.yohotw;
@@ -216,7 +209,6 @@
 				this.spcode = spcode;
 				this.shopeeA = shopeeA;
 				this.shopeeB = shopeeB;
-<<<<<<< HEAD
 				this.yohoA = yohoA;
 				this.mprice = mprice;
 				this.cost = product.cost;
@@ -224,8 +216,6 @@
 				this.pchomeA = pchomeA;
 				this.pchomeB = pchomeB;
 				this.pchomeC = pchomeC;
-=======
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 			}
 
 			var providerID = currentProductInfo.provider,
@@ -251,13 +241,7 @@
 				pVideo = pVideo.split(' ');
 				pVideo = pVideo[0];
 				pVideo = pVideo.replace(/"/, '');
-<<<<<<< HEAD
 			}
-=======
-				console.log(pVideo);
-			}
-			console.log(pVideo);
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 
 			var videoCode = $('div#AITB_video').html();
 			var contentCode = $('div#AITB_content').html();
@@ -281,13 +265,10 @@
 
 			//console.log(currentProductInfo);
 
-<<<<<<< HEAD
 			var yohoClass = currentProductInfo.yohoclass;
 				yohoClass = yohoClass.split(" - ");
 			var yohoA = yohoClass[0];
 
-=======
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 			var yahooClass = currentProductInfo.yahooclass;
 				yahooClass = yahooClass.split(" - ");
 			var yahooA = yahooClass[0];
@@ -299,15 +280,12 @@
 			var shopeeA = shopeeClass[0];
 			var shopeeB = shopeeClass[1];
 
-<<<<<<< HEAD
 			var pchomeClass = currentProductInfo.pchomeclass;
 				pchomeClass = pchomeClass.split(" - ");
 			var pchomeA = pchomeClass[0];
 			var pchomeB = pchomeClass[1];
 			var pchomeC = pchomeClass[2];
 
-=======
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 			var getTitle = $('.titleVal');
 			var titleArray = [];
 				for (i=0; i < getTitle.length; i++) {
@@ -320,7 +298,6 @@
 					contentArray.push($(getContent[i]).val());
 				}
 
-<<<<<<< HEAD
 			var getmPrice = $('#_mprice').val();
 			var _mPrice = ((Math.random()/10) + 1.1);
 			var mPrice = getmPrice || Math.floor(currentProductInfo.price * _mPrice);
@@ -330,8 +307,6 @@
 			mPrice[mPrice.length-1] = "0";
 			mPrice = mPrice.join('');
 
-=======
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 			var spcode = "歡迎來到 Ai-Tec 智瑞科技\n\n因為品項眾多，無法即時更新庫存狀態，煩請下標前先詢問是否有現貨喔！\n\n\n本店售出物品，除非特價品或二手品，均附 3 個月保固\n\n期間有非人為損壞，將更換良品或免費維修。超出期限或人為損壞，則酌收運費、維修費與處理費。\n\n參考更多本店商品：#aitec\n\n歡迎 FB 搜尋「 Ai Tec 」，關注粉絲團！\n\n\n商品特性：\n\n";
 
 				for (i=0; i < contentArray.length; i++) {
@@ -342,11 +317,7 @@
 
 			//console.log(contentArray);
 
-<<<<<<< HEAD
 			var _product = new productObj(currentProductInfo, pImage1, pImage2, pImage3, pIntro, pVideo, pCode, pRYCode, providerID, warrantyID, rutenA, rutenB, yahooA, yahooB, yahooC, titleArray, contentArray, spcode, shopeeA, shopeeB, yohoA, mPrice, pchomeA, pchomeB, pchomeC);
-=======
-			var _product = new productObj(currentProductInfo, pImage1, pImage2, pImage3, pIntro, pVideo, pCode, pRYCode, providerID, warrantyID, rutenA, rutenB, yahooA, yahooB, yahooC, titleArray, contentArray, spcode, shopeeA, shopeeB);
->>>>>>> d357ac95682b62c7c23f9186e333b0695c3b5034
 
 			(pImage1 == "" || pImage1 == undefined || pImage1 == null) ? alert("缺少商品圖片一") : checkValue++;
 			(pImage2 == "" || pImage2 == undefined || pImage2 == null) ? alert("缺少商品圖片二") : checkValue++;
