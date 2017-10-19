@@ -175,6 +175,8 @@ exports.launching = function(product) {
 
 			function startLaunch(step) {
 
+				driver.sleep(3000);
+
 				console.log("正在將商品 "+product.name+" 上架到 YohoTW...");
 				// 上架頁面
 				driver.get("https://www.taiwanyoho.com/x/goods.php?act=add");
@@ -297,6 +299,8 @@ exports.launching = function(product) {
 		async.series([
 
 			function startLaunch(step) {
+
+				driver.sleep(3000);
 				
 				console.log("正在將商品 "+product.name+" 上架到 Ruten...");
 
@@ -402,6 +406,8 @@ exports.launching = function(product) {
 
 			function startLaunch(step) {
 
+				driver.sleep(3000);
+
 				console.log("正在將商品 "+product.name+" 上架到 Yahoo...");
 
 				// 刊登頁面
@@ -470,6 +476,10 @@ exports.launching = function(product) {
 				if (product.video !== 0) {
 					product.video = "https://youtu.be/"+product.video;
 					driver.findElement(By.xpath('//*[@id="videoSet"]'))
+						.sendKeys("123");
+					driver.findElement(By.xpath('//*[@id="videoSet"]'))
+						.clear();
+					driver.findElement(By.xpath('//*[@id="videoSet"]'))
 						.sendKeys(product.video);
 				}
 
@@ -517,6 +527,8 @@ exports.launching = function(product) {
 		async.series([
 
 			function startLaunch(step) {
+
+				driver.sleep(3000);
 
 				console.log("正在將商品 "+product.name+" 上架到 Shopee...");
 				// 新增商品頁面
@@ -611,13 +623,19 @@ exports.launching = function(product) {
 
 			function startLaunch(step) {
 
+				driver.sleep(3000);
+
 				console.log("正在將商品 "+product.name+" 上架到 PCHome...");
 				// 新增商品頁面
 				driver.get('https://cadm.pcstore.com.tw/prod/prod_nmod.htm');
 
 				// 商品名稱
-				driver.findElement(By.css('#c_prod_name'))
-					.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
+
+				ele = driver.wait(until.elementLocated(By.css('#c_prod_name')));
+				ele.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
+
+				// driver.findElement(By.css('#c_prod_name'))
+				// 	.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
 
 				// 分類
 				driver.findElement(By.css('#exhL1 option:nth-child('+product.pchomeA+')'))
@@ -630,6 +648,32 @@ exports.launching = function(product) {
 					driver.findElement(By.css('#exhL3 option:nth-child('+product.pchomeC+')'))
 					.click();
 				}
+
+
+				// testele = driver.findElement(By.css('#exhL1 option:nth-child('+product.pchomeA+')'));
+				// driver.executeScript("arguments[0].click();", testele);
+				// driver.sleep(2000);
+
+				// testele = driver.findElement(By.css('#exhL2 option:nth-child('+product.pchomeB+')'));
+				// driver.executeScript("arguments[0].click();", testele);
+				// driver.sleep(2000);
+
+				// if (!(isNaN(product.pchomeC))) {
+				// 	testele = driver.findElement(By.css('#exhL2 option:nth-child('+product.pchomeB+')'));
+				// 	driver.executeScript("arguments[0].click();", testele);
+				// }
+
+
+				// driver.findElement(By.css('#exhL1 option:nth-child('+product.pchomeA+')'))
+				// 	.click();
+				// driver.sleep(2000);
+				// driver.findElement(By.css('#exhL2 option:nth-child('+product.pchomeB+')'))
+				// 	.click();
+				// driver.sleep(2000);
+				// if (!(isNaN(product.pchomeC))) {
+				// 	driver.findElement(By.css('#exhL3 option:nth-child('+product.pchomeC+')'))
+				// 	.click();
+				// }
 
 				// 售價與確認售價
 				driver.findElement(By.css('#c_prod_price'))
@@ -676,10 +720,12 @@ exports.launching = function(product) {
 				driver.executeScript("arguments[0].click();", testele);
 
 				// 信用卡確認（之後可移除）
-				testele = driver.findElement(By.css('div#aa'));
-				driver.executeScript("arguments[0].click();", testele);
+				//testele = driver.findElement(By.css('div#aa'));
+				//driver.executeScript("arguments[0].click();", testele);
 
 				driver.sleep(3000);
+
+				driver.wait(until.elementLocated(By.css('tbody tr:nth-child(2) a')));
 
 				var pchomeUrl = driver.findElement(By.css('tbody tr:nth-child(2) a'));
 				pchomeUrl.getAttribute('href').then(function(href) {
@@ -701,6 +747,8 @@ exports.launching = function(product) {
 
 			function starCreate(step) {
 
+				driver.sleep(3000);
+
 				console.log("正在將商品 "+product.name+" 建立庫存頁面...");
 				// 新增商品頁面
 				driver.get('https://ec.mallbic.com/Module/2_Good/Good_Entry.aspx');
@@ -711,9 +759,10 @@ exports.launching = function(product) {
 				driver.findElement(By.css('li[title="新增商品"]'))
 					.click();
 
+				driver.sleep(3000);
 				// 商品編號
 				driver.findElement(By.css('#txt_good_id > input'))
-					.sendKeys(product.yohotw);
+					.sendKeys("T"+product.yohotw);
 
 				// 商品名稱
 				driver.findElement(By.css('#txt_good_name > input'))
@@ -744,17 +793,20 @@ exports.launching = function(product) {
 					.sendKeys(product.cost);
 
 				// 儲存
-				driver.findElement(By.css('#btn_save'))
-					.click();
+				//driver.findElement(By.css('#btn_save')).click();
+				testele = driver.findElement(By.css('#btn_save'));
+				driver.executeScript("arguments[0].click();", testele);
 
-				// testele = driver.findElement(By.css('li[title="匯出商品資料"]'));
-				// driver.executeScript("arguments[0].click();", testele);
+				driver.sleep(2000);
+				// 關閉頁面
+				//testele = driver.findElement(By.css('#dlg_modify_good__7 span.btn_close_m'));
+				//driver.executeScript("arguments[0].click();", testele);
 
-				// driver.findElement(By.css('#txt_good_id > input'))
-				// 	.sendKeys(product.yohotw);
-
-				// driver.findElement(By.css('#txt_good_name > input'))
-				// 	.sendKeys(product.name);
+				var mallbicUrl = driver.findElement(By.css('tbody tr.bc_even:nth-child(2)'));
+				mallbicUrl.getAttribute('class').then(function() {
+					googleSheet.writeIn("storage", "1", product);
+					callback();
+				});
 
 			}
 

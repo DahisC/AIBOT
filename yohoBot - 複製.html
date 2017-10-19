@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>YohoHK 上架機器人 | V1.0</title>
+
+	<style>
+
+		* {
+			font-family: Microsoft YaHei;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		div {
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+
+		button {
+			width: 100%;
+		}
+
+		table {
+			margin: 5px auto 5px auto;
+		}
+
+		td {
+			width: 150px;
+			height: 30px;
+		}
+
+		#displayArea img {
+			width: 100%;
+		}
+
+		#displayArea div {
+			margin: 5px 5px 5px 5px;
+		}
+
+	</style>
+
+	<link rel="stylesheet" href="bootstrap.css" type="text/css"/>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+		var socket = io();
+	</script>
+
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 上方快捷列 -->
+			<div class="col-md-12">
+				<div class="col-md-3">
+					<button type="button" class="btn btn-link"><a href="https://goo.gl/ULAsyA" target="_blank">原始表單</a></button>
+				</div>
+				<div class="col-md-3">
+					<input type="number" class="form-control" id="searchBar" placeholder="起始搜尋流水號">
+				</div>
+
+				<div class="col-md-1">
+					<input type="number" class="form-control" id="searchRange" placeholder="搜尋範圍">
+				</div>
+
+		<!-- 		<div class="col-md-3">
+					<input type="number" class="form-control" id="searchMax" placeholder="13100">
+				</div> -->
+
+				<div class="col-md-1">
+					<button id="btn_search" type="submit" class="btn btn-success">Search</button>
+				</div>
+
+				<script>
+					var searchArray = new Array();
+
+					$('#btn_search').click(function () {
+
+						_resultArray = [];
+						dontLaunchList = [];
+
+						var searchNum = $('#searchBar').val();
+						var rangeNum = $('#searchRange').val() || 0;
+						searchArray = new Array();
+
+						if (searchNum == '') {
+							alert("輸入商品起始流水號");
+						} else if (rangeNum < 0) {
+							alert("搜尋範圍不可為負數");
+						}
+						else {
+							var range = Number(searchNum) + Number(rangeNum);
+							for (var i=searchNum; i<=range; i++) {
+								searchArray.push(Number(i));
+							}
+							socket.emit('btn_search', searchArray);
+							btnSearching();
+						}
+
+					});
+				</script>
+
+				<div class="col-md-1">
+					<button id="btn_launch" type="submit" class="btn btn-danger">上架</button>
+				</div>
+
+				<script>
+					$('#btn_launch').click(function () {
+						prepareCheck('launch');
+					});
+
+				</script>
+
+				<!--  -->
+
+				<div class="col-md-3"></div>
+				<div class="col-md-2"></div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="col-md-3"></div>
+				<div id="displayArea" class="col-md-6"></div>
+				<div class="col-md-3"></div>
+			</div>
+
+		</div>
+	</div>
+
+	<!--
+		顯示搜尋產品
+
+		- 過濾並標記正常供貨或價格為零之產品
+	-->
+	<script>
+		
+		var _resultArray;
+		socket.on('displayResult', function(resultArray) {
+
+			_resultArray = resultArray;
+			launchedArray = [];
+			btnSearched();
+
+			$('div#displayArea').empty();
+
+			for (var i=0; i < resultArray.length; i++) {
+				$('div#displayArea').append('<div id="'+resultArray[i].Num+'" class="results"></div>')
+					$('div#'+resultArray[i].Num).append('<table class="table-bordered"></table>');
+					$('#displayArea table').last().append('<tbody></tbody>');
+
+						$('#displayArea table tbody').last().append('<tr></tr>');
+							$('#displayArea table tr').last().append('<td>'+resultArray[i].Num+'</td><td class="_status">排定上架</td><td class="_yohoTW"><img src="http://imageshack.com/a/img922/7373/Hjt779.png"></td><td class="_ruten"><img src="http://imageshack.com/a/img924/759/xgiHsk.png"></td><td class="_yahoo"><img src="http://imageshack.com/a/img924/9745/l6EfYT.png"></td><td class="_shopee"><img src="http://imageshack.com/a/img923/7521/eabrc9.png"></td><td class="_pcHome"><img src="http://imageshack.com/a/img924/9643/NEszWg.png"></td>');
+
+						$('#displayArea table tbody').last().append('<tr></tr>');
+							$('#displayArea table tr').last().append('<td rowspan="4" class="_img"><img src="'+resultArray[i].Img+'"></td><td rowspan="4" class="_isLive">'+resultArray[i].isLive+'</td><td colspan="5">'+resultArray[i].Brand+'</td>');
+						$('#displayArea table tbody').last().append('<tr></tr>');
+							$('#displayArea table tr').last().append('<td colspan="5">'+resultArray[i].Name+'</td>');
+						$('#displayArea table tbody').last().append('<tr></tr>');
+							$('#displayArea table tr').last().append('<td colspan="5" ondblclick="edit()">$ '+resultArray[i].Price+'</td>');
+						$('#displayArea table tbody').last().append('<tr></tr>');
+							$('#displayArea table tr').last().append('<td colspan="5">'+resultArray[i].ClassB+" > "+resultArray[i].ClassA+'</td>');
+
+						$('._shopee img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.2');
+						$('._ruten img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.2');
+						$('._yahoo img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.1');
+						$('._yohoTW img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.1');
+						$('._pcHome img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.1');
+
+				//$('#'+resultArray[i].Num+' td').attr('id', resultArray[i].Num);
+			}
+
+			$('#displayArea div').attr('onclick', 'dontLaunch()');
+
+			prepareCheck();
+
+		});
+
+		/* 此處開始為上架等判定 */
+		function prepareCheck(launchSign) {
+			// 先傳送請求給表單以帶回已上架商品列表
+			socket.emit('checkLaunched', launchSign);
+		}
+
+		socket.on('fetchedStatus', function(rows, launchSign) {
+			// resultArray 為搜尋的陣列（已爬過資料後存成物件）
+			// rows 為表單內的商品列表內容（亦為物件）
+
+			var addingList = [];
+
+
+			for (i=0; i < _resultArray.length; i++) {
+				var number = _resultArray[i].Num;
+				var isLive = _resultArray[i].isLive;
+				console.log(isLive);
+				if (isLive == '正常供貨') {
+					addingList.push(number);
+				} else {
+					continue;
+				}
+				for (j=0; j < rows.length; j++) {
+					var rownum = rows[j].num;
+					console.log(rownum);
+
+					if (number == rownum) {
+						var index = addingList.pop();
+					}
+				}
+			}
+
+			socket.emit('addRow', addingList, launchSign);
+		});
+
+		socket.on('addedRows', function(rows, launchSign) {
+
+			function addAttr() {
+				for (i=0; i < _resultArray.length; i++) {
+					for(j=0; j < rows.length; j++) {
+						console.log(rows[j].num);
+						if (_resultArray[i].Num == rows[j].num) {
+							_resultArray[i].yohoTW = rows[j].yohotw;
+							_resultArray[i].Ruten = rows[j].ruten;
+							_resultArray[i].Yahoo = rows[j].yahoo;
+							_resultArray[i].Shopee = rows[j].shopee;
+							_resultArray[i].pcHome = rows[j].pchome;
+						}
+					}
+				}
+			}
+
+			checkStatus(_resultArray, rows, launchSign);
+		});
+
+		var dontLaunchList = [];
+
+		function checkStatus(resultArray, rows, launchSign) {
+
+			dontLaunchList = [];
+
+			for (i=0; i < resultArray.length; i++) {
+
+				var id = resultArray[i].Num;
+
+				// 將排定上架的商品加入顏色
+				if ($('div#'+resultArray[i].Num+' td._status').text() == "排定上架") {
+					$('div#'+resultArray[i].Num).css('border-left', "5px RoyalBlue solid");
+				}
+
+				// 找出友和不提供或頁面中設定取消上架的商品
+				if (resultArray[i].isLive == "庫存不足" || resultArray[i].isLive == "已下架") {
+					dontLaunchList.push(Number(resultArray[i].Num));
+					$('div#'+resultArray[i].Num).css('border-left', "5px LightGrey solid");
+					$('div#'+resultArray[i].Num+' td._status').text("無法上架");
+					$('div#'+resultArray[i].Num).attr('onclick', "");
+				} else if ($('div#'+resultArray[i].Num+' td._status').text() == "取消上架") {
+					dontLaunchList.push(Number(resultArray[i].Num));
+				}
+			}
+
+			// 找出表單內上架過的商品
+			for (i=0; i < rows.length; i++) {
+				if (rows[i].timestamp != "") {
+					console.log(rows[i].num+" launched.");
+					dontLaunchList.push(Number(rows[i].num));
+					$('div#'+rows[i].num).css('border-left', "5px LightSalmon solid");
+					$('div#'+rows[i].num+' td._status').text("已上架");
+					$('div#'+rows[i].num).attr('onclick', "");
+				}
+			}
+			console.log(dontLaunchList);
+
+			// 收到上架訊號時，才開始整理可上架清單
+			if (launchSign == 'launch') {
+				var launchList = [];
+				var launchListcc = [];
+				for (i=0; i < resultArray.length; i++) {
+					var num = Number(resultArray[i].Num);
+					var cantLaunch = dontLaunchList.indexOf(num);
+					if (cantLaunch == -1) {
+						launchList.push(resultArray[i]);
+						launchListcc.push(num);
+					}
+				}
+				console.log(launchListcc);
+				console.log(launchList);
+				socket.emit('yohoLaunch', launchList);
+			}
+		}
+
+	</script>
+
+
+
+	<script>
+		// 編輯金額
+		function edit() {
+			var target = event.target;
+			var value = prompt();
+
+			$(target).text('$ '+value);
+
+		}
+
+		// 搜尋中按鈕狀態
+		function btnSearching() {
+			$('#btn_search').text('Searching');
+			$('#btn_search').attr('class', 'btn btn-danger');
+		}
+
+		// 搜尋後按鈕狀態
+		function btnSearched() {
+			$('#btn_search').text('Search');
+			$('#btn_search').attr('class', 'btn btn-success');
+		}
+
+
+		// // 全域變數
+		// var launchedArray = new Array;
+
+		// socket.on('fetchedStatus', function(rows) {
+		// 	checkStatus(_resultArray, rows);
+		// });
+
+		// function checkStatus(resultArray, rows) {
+		// 	cantLaunch(resultArray);
+		// 	checkSheetLaunched(rows);
+		// }
+
+		// /* 搜尋表單內已紀錄上架之商品 */
+		// function checkSheetLaunched(rows) {
+		// 	function list(row, index, array) {
+		// 		// 增加偏移量以符合表單的偏移值
+		// 		var offset = index + 1;
+				
+		// 		// 找出已上架的商品後存入陣列
+		// 		if (row.timestamp != "") { 
+		// 			launchedArray.push(Number(row.num));
+
+		// 			$('div#'+row.num).css('border-left', "5px ForestGreen solid");
+		// 		}
+		// 	}
+			
+		// 	rows.forEach(list);
+		// }
+
+		// /* 搜尋結果中已標示無法購買之商品 */
+		// function cantLaunch(resultArray) {
+		// 	for (var i=0; i < resultArray.length; i++) {
+		// 		if (resultArray[i].isLive == "庫存不足" || resultArray[i].isLive == "已下架") {
+		// 			$('div#'+resultArray[i].Num).css('border-left', "5px LightGrey solid");
+		// 			$('div#'+resultArray[i].Num).attr('onclick', "");
+		// 			launchedArray.push(Number(resultArray[i].Num));
+		// 		}
+		// 	}
+		// }
+
+		/* 人工選擇上架 */
+		function dontLaunch() {
+			var target = event.target;
+			var select = $(target).parents('div').attr('id');
+				select = Number(select);
+
+			$('div#'+select).css('border-left', "5px LightPink solid");
+			$('div#'+select).attr('onclick', "willLaunch()");
+			$('div#'+select+' td._status').text("取消上架");
+
+		}
+
+		function willLaunch() {
+			var target = event.target;
+			var select = $(target).parents('div').attr('id');
+				select = Number(select);
+
+			$('div#'+select).css('border-left', "5px RoyalBlue solid");
+			$('div#'+select).attr('onclick', "dontLaunch()");
+			$('div#'+select+' td._status').text("排定上架");
+
+			var idIndex = dontLaunchList.indexOf(select);
+
+		}
+	</script>
+
+</body>
+</html>
