@@ -21,8 +21,6 @@ http.listen(port, function() {
 });
 
 var googleSheet = require('./launchBot/googleSheet.js');
-var yohoSheet = require('./yohoBot/yohoSheet.js');
-var yohoBot = require('./yohoBot/yohoBot.js');
 
 //
 
@@ -47,50 +45,12 @@ io.on('connection', function(socket) {
 		launchBot.launching(product);
 	});
 
-	// socket.on('btn_search', function(searchArray) {
-	// 	var yohoCrawler = require('./yohoBot/yohoCrawler.js');
-	// 	yohoCrawler.searchYoho(searchArray, function(resultArray) {
-	// 		console.log("Received display request, displaying search results on webpage...")
-	// 		io.emit('displayResult', resultArray);
-	// 	});
-	// });
-
-	socket.on('btn_search', function(searchArray) {
-		var yohoCrawler = require('./yohoBot/yohoCrawler.js');
-
-		yohoCrawler.searchYoho(searchArray, func1, func2);
-
-		function func1(resultArray) {
-			console.log("Received display request, displaying search results on webpage...");
-			io.emit('searchResult', resultArray);
-		}
-
-		function func2(now, all) {
-			io.emit('searchBarUpdate', now, all);
-		}
-	});
-
-	socket.on('sheetResult', function(resultArray) {
-		yohoSheet.getStatus(function(rows) {
-			io.emit('getResults', resultArray, rows);
-		});
-	});
-
-	socket.on('btn_launch', function(_resultArray, _addList) {
-		yohoSheet.addRow(_addList, function(rows) {
-			yohoBot.launching(_resultArray, rows, func1, func2);
-
-			function func1(text) {
-				io.emit('displayProgress', text);
-			}
-
-			function func2(product, count) {
-				io.emit('currentProgress', product, count);
-			}
-		});
-	});
 
 });
+
+// 
+
+
 
 exports.refreshList = function() {
 	googleSheet.getSheet(function(launchList) {

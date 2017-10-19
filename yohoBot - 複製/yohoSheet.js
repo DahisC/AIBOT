@@ -116,7 +116,7 @@ exports.addRow = function(addList, callback) {
 
 }
 
-exports.writeIn = function(header, value, row) {
+exports.writeIn = function(header, value, row, cb) {
 	async.series([
 
 		function setAuth(step) {
@@ -137,8 +137,8 @@ exports.writeIn = function(header, value, row) {
 			(header == "launched") ? col = 2 : "";
 			(header == "timestamp") ? col = 3 : "";
 			(header == "yohotw") ? col = 4 : "";
-			(header == "yahoo") ? col = 5 : "";
-			(header == "ruten") ? col = 6 : "";
+			(header == "ruten") ? col = 5 : "";
+			(header == "yahoo") ? col = 6 : "";
 			(header == "shopee") ? col = 7 : "";
 			(header == "pchome") ? col = 8 : "";
 
@@ -155,6 +155,7 @@ exports.writeIn = function(header, value, row) {
 				if (header == "anyspecs" || header == "ruten" || header == "yahoo" || header == "shopee" || header == "pchome" || header == "yohotw") {
 					console.log("將網址 "+value+" 寫入儲存格 "+header+" 中...");
 					cell.setValue(formula, null);
+					cb();
 				} 
 				else if (header == "storage") {
 					console.log("雲端小幫手庫存建立完成");
@@ -163,6 +164,7 @@ exports.writeIn = function(header, value, row) {
 				else {
 					console.log(value+" - 商品 "+product.name+" 上架完成。")
 					cell.setValue(value, null);
+					cb();
 				}
 
 			});

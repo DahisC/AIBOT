@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>YohoHK 上架機器人 | V1.0</title>
+
+	<style>
+
+		* {
+			font-family: Microsoft YaHei;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		div {
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+
+		button {
+			width: 100%;
+		}
+
+		table {
+			margin: 5px auto 5px auto;
+		}
+
+		#displayArea td {
+			width: 150px;
+			height: 30px;
+		}
+
+		#displayArea img {
+			width: 100%;
+		}
+
+		#displayArea div {
+			margin: 5px 5px 5px 5px;
+		}
+
+		#displayProgress td {
+			border: 1px red solid;
+		}
+
+	</style>
+
+	<link rel="stylesheet" href="bootstrap.css" type="text/css"/>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+		var socket = io();
+	</script>
+
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div class="row">
+			<!-- 上方快捷列 -->
+			<div class="col-md-12">
+				<div class="col-md-3">
+					<input type="number" class="form-control" id="searchBar" placeholder="起始搜尋流水號">
+				</div>
+
+				<div class="col-md-1">
+					<input type="number" class="form-control" id="searchRange" placeholder="搜尋範圍">
+				</div>
+
+		<!-- 		<div class="col-md-3">
+					<input type="number" class="form-control" id="searchMax" placeholder="13100">
+				</div> -->
+
+				<div class="col-md-2">
+					<button id="btn_search" type="submit" class="btn btn-success">Search</button>
+				</div>
+
+				<script>
+					var searchArray = new Array();
+
+					$('#btn_search').click(function() {
+
+						$('#btn_launch').prop('disabled', true);
+						var searchNum = $('#searchBar').val();
+						var rangeNum = $('#searchRange').val() || 0;
+						searchArray = new Array();
+
+						if (searchNum == '') {
+							alert("輸入商品起始流水號");
+						} else if (rangeNum < 0) {
+							alert("搜尋範圍不可為負數");
+						}
+						else {
+							$('#btn_search').attr('disabled', "disabled");
+							var range = Number(searchNum) + Number(rangeNum);
+							for (var i=searchNum; i<=range; i++) {
+								searchArray.push(Number(i));
+							}
+							socket.emit('btn_search', searchArray);
+						}
+
+					});
+				</script>
+
+				<div class="col-md-3">
+					<button id="btn_launch" type="submit" class="btn btn-danger" disabled="disabled">上架</button>
+				</div>
+				<div class="col-md-3">
+					<button type="button" class="btn btn-link"><a href="https://goo.gl/nma1xE" target="_blank">上架表單</a></button>
+				</div>
+
+				<script>
+					$('#btn_launch').click(function() {
+						
+						for (i=0; i<_resultArray.length; i++) {
+							let name = $('div#_'+_resultArray[i].Num+' ._name').text();
+							_resultArray[i].Name = name;
+						}
+
+						socket.emit('btn_launch', _resultArray, _addList);
+					});
+				</script>
+
+			</div>
+
+			<div class="col-md-12">
+				<div id="displayArea" class="col-md-6"></div>
+				<div id="displayProgress" class="col-md-6">
+					<table>
+						<tbody>
+							<tr>
+								<td id="_progress" colspan="2">0/10</td>
+							</tr>
+							<tr>
+								<td id="_name" colspan="2"></td>
+							</tr>
+							<tr>
+								<td id="__name"></td>
+								<td id="__test"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+
+			<script>
+
+				socket.on('currentProgress', function(product, count) {
+					now = count+1;
+					if (now <= product.length) {
+						$('#displayProgress td#_progress').text(now+" / "+product.length);
+						$('#displayProgress td#_name').text(product[count].Name);
+					}
+				});
+
+				socket.on('displayProgress', function(text) {
+					console.log(sign);
+					console.log(text);
+				});
+			</script>
+
+		</div>
+	</div>
+
+	<!--
+		顯示搜尋產品
+
+		- 過濾並標記正常供貨或價格為零之產品
+	-->
+	<script>
+
+		/* 處理搜尋結果 */
+
+		// 全域變數 - 將搜尋結果存入後，以函式 appendStatus 附加表單內的狀態
+
+		var _resultArray = [];
+		var _addList = [];
+
+		socket.on('searchResult', function(resultArray) {
+			_resultArray = [];
+			_addList = [];
+			_resultArray = resultArray;
+			socket.emit('sheetResult', resultArray);
+			socket.on('getResults', function(resultArray, rows) {
+				display(resultArray);
+				changeColor(resultArray, rows);
+				appendStatus(resultArray, rows);
+				appendLogo(resultArray, rows);
+				getAddList(resultArray, rows);
+			});
+
+		});
+
+		/* btn_launch handler */
+
+
+		/* 函式存放區域 */
+
+		function display(resultArray) {
+				$('div#displayArea').empty();
+
+				for (var i=0; i < resultArray.length; i++) {
+					$('div#displayArea').append('<div id="_'+resultArray[i].Num+'" class="results"></div>')
+						$('div#_'+resultArray[i].Num).append('<table class="table-bordered"></table>');
+						$('#displayArea table').last().append('<tbody></tbody>');
+
+							$('#displayArea table tbody').last().append('<tr></tr>');
+								$('#displayArea table tr').last().append('<td>'+resultArray[i].Num+'</td><td class="_status">排定上架</td><td class="_yohoTW"><a><img src="http://imageshack.com/a/img922/7373/Hjt779.png"></a></td><td class="_ruten"><a><img src="http://imageshack.com/a/img924/759/xgiHsk.png"></a></td><td class="_yahoo"><a><img src="http://imageshack.com/a/img924/9745/l6EfYT.png"></a></td><td class="_shopee"><a><img src="http://imageshack.com/a/img923/7521/eabrc9.png"></a></td><td class="_pcHome"><a><img src="http://imageshack.com/a/img924/9643/NEszWg.png"></a></td>');
+
+							$('#displayArea table tbody').last().append('<tr></tr>');
+								$('#displayArea table tr').last().append('<td rowspan="4" class="_img"><img src="'+resultArray[i].Img+'"></td><td rowspan="4" class="_isLive">香港方面<br><br>'+resultArray[i].isLive+'</td><td colspan="5">'+resultArray[i].Brand+'</td>');
+							$('#displayArea table tbody').last().append('<tr></tr>');
+								$('#displayArea table tr').last().append('<td id="_'+resultArray[i].Num+'" colspan="5" class="_name" ondblclick="edit()">'+resultArray[i].Name+'</td>');
+							$('#displayArea table tbody').last().append('<tr></tr>');
+								$('#displayArea table tr').last().append('<td colspan="5" ondblclick="edit()">$ '+resultArray[i].Price+'</td>');
+							$('#displayArea table tbody').last().append('<tr></tr>');
+								$('#displayArea table tr').last().append('<td colspan="5">'+resultArray[i].ClassB+" > "+resultArray[i].ClassA+'</td>');
+
+							$('._shopee img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.2');
+							$('._ruten img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.2');
+							$('._yahoo img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.2');
+							$('._yohoTW img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.2');
+							$('._pcHome img').css('width', '25px').css('height', '25px').css('margin', '1px').css('opacity', '0.2');
+
+				}
+			}
+
+		function changeColor(resultArray, rows) {
+			for (i=0; i < resultArray.length; i++) {
+				let ra = resultArray[i];
+				let id = ra.Num;
+				if (ra.isLive == '正常供貨') {
+					$('div#'+id).css('border-left', "5px RoyalBlue solid");
+				} else if (ra.isLive == '庫存不足' || ra.isLive == '已下架') {
+					$('div#'+id).css('border-left', "5px LightGrey solid");
+					$('div#'+id+' td._status').text("無法上架");
+				}
+			}
+		
+			for (i=0; i <rows.length; i++) {
+				let row = rows[i];
+				let id = Number(row.num);
+
+				if (row.timestamp !== "") {
+					$('div#'+id+' td._status').text("已上架");
+					$('div#'+id).css('border-left', "5px DarkBlue solid");
+				}
+			}
+		}
+
+		function appendStatus(resultArray, rows) {
+			for (i=0; i < resultArray.length; i++) {
+				for (j=0; j < rows.length; j++) {
+					if (resultArray[i].Num == rows[j].num) {
+						resultArray[i].launched = rows[j].launched;
+						resultArray[i].yohotw = rows[j].yohotw;
+						resultArray[i].ruten = rows[j].ruten;
+						resultArray[i].yahoo = rows[j].yahoo;
+						resultArray[i].shopee = rows[j].shopee;
+						resultArray[i].pchome = rows[j].pchome;
+
+						if(rows[j].yohotw != "") {
+							$('div#'+resultArray[i].Num+' ._yohoTW a').attr('href', "http://"+rows[j].yohotw).attr('target', "_blank");
+							$('div#'+resultArray[i].Num+' ._yohoTW img').css('opacity', "1.0");
+						}
+						if(rows[j].ruten != "") {
+							$('div#'+resultArray[i].Num+' ._ruten a').attr('href', "http://"+rows[j].ruten).attr('target', "_blank");
+							$('div#'+resultArray[i].Num+' ._ruten img').css('opacity', "1.0");
+						}
+						if(rows[j].yahoo != "") {
+							$('div#'+resultArray[i].Num+' ._yahoo a').attr('href', "http://"+rows[j].yahoo).attr('target', "_blank");
+							$('div#'+resultArray[i].Num+' ._yahoo img').css('opacity', "1.0");
+						}
+						if(rows[j].shopee != "") {
+							$('div#'+resultArray[i].Num+' ._shopee a').attr('href', "http://"+rows[j].shopee).attr('target', "_blank");
+							$('div#'+resultArray[i].Num+' ._shopee img').css('opacity', "1.0");
+						}
+						if(rows[j].pchome != "") {
+							$('div#'+resultArray[i].Num+' ._pcHome a').attr('href', "http://"+rows[j].pchome).attr('target', "_blank");
+							$('div#'+resultArray[i].Num+' ._pcHome img').css('opacity', "1.0");
+						}
+					}
+				}
+			}
+		}
+
+		function appendLogo(resultArray, rows) {
+
+		}
+
+		function getAddList(resultArray, rows) {
+
+			_addList = [];
+			var rowsNum = [];
+
+			for (i=0; i < rows.length; i++) {
+				rowsNum.push(Number(rows[i].num));
+			}
+
+			for (i=0; i < resultArray.length; i++) {
+				if ( (rowsNum.indexOf(Number(resultArray[i].Num))) == -1 ) {
+					_addList.push(resultArray[i]);
+				}
+			}
+		}
+
+		function edit() {
+			var target = event.target;
+			var id = $(target).attr('id');
+			console.log(target);
+			var text = prompt();
+			$('div#'+id+' ._name').text(text);
+		}
+
+	</script>
+
+
+	<script>
+
+	socket.on('searchBarUpdate', function(now, all) {
+			$('#btn_search').text("Searching..."+now+"/"+all);
+			$('#btn_search').attr('class', "btn btn-danger");
+			if (now == all) {
+				setTimeout(searchDone(), 1000);
+			}
+		});
+
+		function searchDone() {
+			$('#btn_search').attr('class', "btn btn-success");
+			$('#btn_launch').prop('disabled', false);
+			$('#btn_search').prop('disabled', false);
+			$('#btn_search').text("Search");
+		}
+
+	</script>
+
+
+
+
+</body>
+</html>

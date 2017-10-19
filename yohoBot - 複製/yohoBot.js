@@ -42,13 +42,16 @@ exports.launching = function(resultArray, rows, func1, func2) {
 		}
 	}
 
-	prepareLaunch(resultArray, rows, "0", func1, func2);
+	prepareLaunch(resultArray, rows, 0, func1, func2);
 }
 
 function prepareLaunch(resultArray, rows, index, func1, func2) {
 	
 	// func 1 sign
 
+	console.log("**++++++++++++**");
+	console.log(index+"/"+resultArray.length);
+	console.log("**++++++++++++**");
 
 	var i = index;
 	var r = resultArray[i];
@@ -66,22 +69,23 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 
 
 	function checkIndex() {
-		if (index != resultArray.length) { checkLive(); } else { console.log("完成"); return;}
+		if (index == resultArray.length) { console.log("完成"); } else { checkLive();}
 	}
 
 	function checkLive() {
-		if (resultArray[i].isLive == '正常供貨') { checkLaunched(); } else { launchNext1("無法上架：友和香港無法供貨"); return;}
+		if (r.isLive == '正常供貨') { checkLaunched(); } else { launchNext("無法上架：友和香港無法供貨");}
 	}
 
 	function checkLaunched() {
-		if (resultArray[i].timestamp == '') { editContent(); } else { launchNext1("無法上架：重複上架"); return;}
+		if (r.timestamp == '') { editContent(); } else { launchNext("無法上架：重複上架");}
 	}
 
-	function launchNext1(text) {
-		console.log(text);
-		i++;
-		prepareLaunch(resultArray, rows, i, func1, func2);
-	}
+	// function launchNext1(text) {
+	// 	console.log(text);
+	// 	i++;
+	// 	driver.quit();
+	// 	prepareLaunch(resultArray, rows, i, func1, func2);
+	// }
 
 	function editContent() {
 
@@ -116,13 +120,15 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 			nameString = nameString.replace(/打印/g, "列印");
 			nameString = nameString.replace(/外置硬碟/g, "外接硬碟");
 
-		r.Name = "【"+r.Num+"】"+nameString+"《Ai-Tec》";
+		//r.Name = "【"+r.Num+"】"+nameString+"《Ai-Tec》";
+		r.Name = "【BOTTEST】"+nameString+"《Ai-Tec》";
 
 		if (r.ClassB == '美容及護理') {
 			yahooClass1 = "美容保養與彩妝";
 			rutenClass1 = "保養、彩妝";
 		} else {
 			yahooClass1 = "美容保養與彩妝";
+			rutenClass1 = "保養、彩妝";
 		}
 
 		// 
@@ -140,7 +146,7 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 
 	function startLaunch() {
 
-		console.log(resultArray[i].Name);
+		console.log(r.Name);
 		saveImage();
 
 		function saveImage() {
@@ -170,7 +176,7 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 					//process.chdir(productDir);
 					setTimeout(func_saveImages, 1500);
 						function func_saveImages() {
-							request(resultArray[i].Img).pipe(fs.createWriteStream(productDir+'image1.png'));
+							request(r.Img).pipe(fs.createWriteStream(productDir+'image1.png'));
 							startDriver();
 		 					callback(null);
 						}
@@ -190,24 +196,27 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 			checkYoho();
 
 			function checkYoho() {
-				if (resultArray[i].yohotw == '') { launchYoho(function() {checkYahoo(); }); } else { checkYahoo(); }
+				if (r.yohotw == '') { launchYoho(function() {checkYahoo(); }); } else { checkYahoo(); }
 			}
 
 			function checkYahoo() {
-				if (resultArray[i].yahoo == '') { launchYahoo(function() { checkRuten(); }); } else { checkRuten(); }
+				if (r.yahoo == '') { launchYahoo(function() { checkRuten(); }); } else { checkRuten(); }
 			}
 
 			function checkRuten() {
-				if (resultArray[i].ruten == '') {launchRuten(function() { checkShopee(); }); } else { checkShopee(); }
+				if (r.ruten == '' || r.ruten == undefined ) { launchRuten(function() { checkShopee(); }); } else { checkShopee(); }
 			}
 
 			function checkShopee() {
-				if (resultArray[i].shopee == '') {launchShopee(function() { launchNext("商品 "+resultArray[i].Name+" 上架完畢"); }); } else { launchNext("商品 "+resultArray[i].Name+" 上架完畢"); }
+				if (r.shopee == '') { launchShopee(function() { checkDriver(); }); } else { checkDriver(); }
+			}
+
+			function checkDriver() {
+				launchNext("商品 "+r.Name+" 上架完畢");
 			}
 
 			function launchNext(text) {
 				console.log(text);
-				driver.quit();
 				i++;
 				prepareLaunch(resultArray, rows, i, func1, func2);
 			}
@@ -314,8 +323,9 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 						driver.wait(until.elementLocated(By.css('body > h1 > span.action-span > a'))).click().then(function() {
 							var yohoUrl = driver.findElement(By.css('div.list-div tr:nth-child(2) td a:nth-child(1)'));
 							yohoUrl.getAttribute('href').then(function(href) {
-								yohoSheet.writeIn("yohotw", href, r.row)
-								callback();
+								yohoSheet.writeIn("yohotw", href, r.row, function() {
+									callback();
+								});
 							});
 						
 							// driver.findElement(By.css('body > h1 > span.action-span > a')).click().then(function() {
@@ -429,7 +439,16 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 				function _end() {
 					driver.findElement(By.css('input[value="下一步"]')).click().then(() => {
 						driver.wait(until.elementLocated((By.css('input[value="送出"]')))).then(() => {
-							driver.findElement((By.css('input[value="送出"]'))).click();
+							driver.findElement((By.css('input[value="送出"]'))).click().then(() => {
+								driver.wait(until.elementLocated(By.css('span.value a'))).then(() => {
+									let yahooUrl = driver.findElement(By.css('span.value a'));
+									yahooUrl.getAttribute('href').then((href) => {
+										yohoSheet.writeIn("yahoo", href, r.row, function() {
+											callback();
+										});
+									});
+								});
+							});
 						});
 					});
 				}
@@ -457,14 +476,33 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 
 				function _1() {
 
-					// 分類一
-					driver.findElement(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass1+'")]')).click().then(function() {
-						driver.sleep(2000);
-						// 分類二
-						driver.findElement(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass2+'")]')).click().then(function() {
-							_2();
-						});
-					});
+					if (rutenClass1 == "保養、彩妝") {
+						choose('保養、彩妝', '國際代購/代買');
+					}
+
+					function choose() {
+
+						for (i=0; i<=arguments.length; i++) {
+
+							driver.sleep(1000);
+							if (i == 0) {
+								driver.findElement(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+arguments[0]+'")]')).click();
+							} else if(i == 1) {
+								driver.findElement(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+arguments[1]+'")]')).click();
+							} else if (i == arguments.length) {
+								_2();
+							}
+						}
+					}
+
+					// // 分類一
+					// driver.findElement(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass1+'")]')).click().then(function() {
+					// 	driver.sleep(2000);
+					// 	// 分類二
+					// 	driver.findElement(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass2+'")]')).click().then(function() {
+					// 		_2();
+					// 	});
+					// });
 				}
 
 				function _2() {
@@ -522,7 +560,7 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 
 				function _5() {
 					// 等待圖片上傳
-					driver.sleep(5000);
+					driver.sleep(10000);
 
 					// 下一步
 					driver.findElement(By.css('input[value="下一步"]'))
@@ -532,8 +570,9 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 									driver.wait(until.elementLocated(By.css('body > div > div.rt-wrap > div.rt-text-large.item-upload-result > span'))).then(function() {
 										var rutenUrl = driver.findElement(By.css('div.rt-panel-inner td.text-left:nth-child(2) a'));
 											rutenUrl.getAttribute('href').then(function(href) {
-												yohoSheet.writeIn("ruten", href, r.row);
-												callback();
+												yohoSheet.writeIn("ruten", href, r.row, function() {
+													callback();
+												});
 											});
 									})
 								})
@@ -546,6 +585,10 @@ function prepareLaunch(resultArray, rows, index, func1, func2) {
 			function launchShopee(callback) {
 				console.log("!shopee");
 				callback();
+			}
+
+			function closeDriver(callback) {
+				driver.quit();
 			}
 
 			// function launchNext(text) {
