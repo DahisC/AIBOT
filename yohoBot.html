@@ -267,10 +267,10 @@
 							$('#displayArea table tr').last().append('<td rowspan="4" class="_img"><img src="'+searchResults[i].Img+'"></td><td rowspan="4" class="_isLive">香港方面<br><br>'+searchResults[i].isLive+'</td><td colspan="5">'+searchResults[i].Brand+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
 						//ondblclick="editContent()"
-							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'" colspan="5" class="_name" ondblclick="editContent()">'+searchResults[i].Name+'</td>');
+							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'_name" colspan="5" class="_name" ondblclick="editContent()">'+searchResults[i].Name+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
 						//ondblclick="editContent()"
-							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'" colspan="5" ondblclick="editContent()">$ '+searchResults[i].Price+'</td>');
+							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'_price" class="_price" colspan="5" ondblclick="editContent()">$ '+searchResults[i].Price+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
 							$('#displayArea table tr').last().append('<td colspan="5">'+searchResults[i].ClassB+" > "+searchResults[i].ClassA+'</td>');
 
@@ -321,7 +321,17 @@
 		function editContent() {
 			let target = event.target;
 			let id = $(target).attr('id');
-			console.log(id);
+
+			var value = prompt();
+
+			$('div#_'+id+' td')
+		
+			for (i=0; i<global_searchResults.length; i++) {
+				console.log(global_searchResults[i]);
+				if (id == global_searchResults[i].Num) {
+					global_searchResults
+				}
+			}
 		}
 
 	</script>
