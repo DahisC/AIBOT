@@ -46,6 +46,22 @@ io.on('connection', function(socket) {
 		launchBot.launching(product);
 	});
 
+	// --------------- YohoBot -----------------
+
+	socket.on('btn_search', (searchRange) => {
+		var yohoCrawler = require('./yohoBot/yohoCrawler.js');
+		yohoCrawler.searchYoho(searchRange, func1, func2);
+
+		// 此函式將搜尋結果帶回
+		function func1(searchResults) {
+			io.emit('displayResult', searchResults);
+		}
+
+		// 此函式傳遞給爬蟲，爬蟲可以直接呼叫此函式改變前端進度模塊顯示之訊息
+		function func2(count, length) {
+			io.emit('displayProgress', count, length);
+		}
+	});
 
 });
 

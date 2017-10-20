@@ -440,7 +440,6 @@ exports.launching = function(product) {
 				// 店家分類
 				driver.findElement(By.css('select[name="customCategory"] option[value="60"]'))
 					.click();
-
 				// 商品名稱
 				driver.findElement(By.css('input[name="itemTitle"]'))
 					.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
@@ -698,8 +697,8 @@ exports.launching = function(product) {
 				// 大圖　小圖
 				driver.findElement(By.css('#c_big_img'))
 					.sendKeys(productDir+"image1.png");
-				driver.findElement(By.css('#c_small_img'))
-					.sendKeys(productDir+"image2.png")
+				// driver.findElement(By.css('#c_small_img'))
+				// 	.sendKeys(productDir+"image2.png")
 
 				// 原始碼
 				var testele = driver.findElement(By.css('#mceu_27-open'));
