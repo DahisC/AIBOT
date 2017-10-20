@@ -144,9 +144,9 @@
 				<div class="col-md-1">
 					<button id="btn_search" class="btn btn-primary">Search</button>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-2">
 					<!-- TEST -->
-					<button id="btn_test" class="btn btn-danger">TEST</button>
+					<button id="btn_launch" class="btn btn-danger">Launch</button>
 				</div>
 
 				<script>
@@ -253,6 +253,8 @@
 
 			$('div#displayArea').empty();
 
+				$('div#displayArea').append('<button id="btn_writeIn" class="btn btn-success" onclick="btn_writeIn()" style="margin: 30px auto 30px auto;">將搜尋結果寫入表單</button>');
+
 			for (i=0; i < searchResults.length; i++) {
 				$('div#displayArea').append('<div id="_'+searchResults[i].Num+'" class="results"></div>')
 					$('div#_'+searchResults[i].Num).append('<table class="table-bordered"></table>');
@@ -264,9 +266,11 @@
 						$('#displayArea table tbody').last().append('<tr></tr>');
 							$('#displayArea table tr').last().append('<td rowspan="4" class="_img"><img src="'+searchResults[i].Img+'"></td><td rowspan="4" class="_isLive">香港方面<br><br>'+searchResults[i].isLive+'</td><td colspan="5">'+searchResults[i].Brand+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
-							$('#displayArea table tr').last().append('<td id="_'+searchResults[i].Num+'" colspan="5" class="_name" ondblclick="edit()">'+searchResults[i].Name+'</td>');
+						//ondblclick="editContent()"
+							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'" colspan="5" class="_name" ondblclick="editContent()">'+searchResults[i].Name+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
-							$('#displayArea table tr').last().append('<td colspan="5" ondblclick="edit()">$ '+searchResults[i].Price+'</td>');
+						//ondblclick="editContent()"
+							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'" colspan="5" ondblclick="editContent()">$ '+searchResults[i].Price+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
 							$('#displayArea table tr').last().append('<td colspan="5">'+searchResults[i].ClassB+" > "+searchResults[i].ClassA+'</td>');
 
@@ -283,17 +287,30 @@
 
 			function changeColor() {
 				for (i=0; i < searchResults.length; i++) {
-				let id = searchResults[i].Num;
-				if (searchResults[i].isLive == '正常供貨') {
-					$('div#_'+id).css('border-left', "5px RoyalBlue solid");
-				} else if (searchResults[i].isLive == '庫存不足' || searchResults[i].isLive == '已下架') {
-					$('div#_'+id).css('border-left', "5px LightGrey solid");
-					$('div#_'+id+' td._status').text("無法上架");
+					let id = searchResults[i].Num;
+
+					if (searchResults[i].isLive == '正常供貨') {
+						$('div#_'+id).css('border-left', "5px RoyalBlue solid");
+					} else if (searchResults[i].isLive == '庫存不足' || searchResults[i].isLive == '已下架') {
+						$('div#_'+id).css('border-left', "5px LightGrey solid");
+						$('div#_'+id+' td._status').text("無法上架");
+					}
 				}
-			}
-		} // socket
+			} // socket
 
 		});
+
+		// 寫入表單按鈕
+		function btn_writeIn() {
+			console.log("function btn_writeIn()");
+			console.log(global_searchResults);		
+		}
+
+	</script>
+		<!-- 處理按鈕 -->
+	<script>
+
+
 	</script>
 
 
@@ -301,40 +318,11 @@
 
 	<script>
 
-		// $('#btn_search').click(() => {
-		// 	$('#myModal').modal('show');
-		// 	setTimeout(test(1), 3000);
-		// });
-
-
-		function test(v) {
-
-		  $('#circle').circleProgress({
-		    animationStartValue: 0.5,
-		    value: v,
-		    size: 200,
-		    fill: {
-		      gradient: ["royalblue", "blue"]
-		    }
-		  });
-
-		};
-
-
-		// (function displayProgress(value) {
-
-		// 	$('#circle').circleProgress({
-		// 		value: value,
-		// 		size: 100,
-		// 		fill: {
-		// 			gradient: ["blue," "purple"]
-		// 		}
-		// 	});
-
-		// 	if (value = 1) { value = 0.01 } else { value = value + 0.01; }
-		// 	displayProgress(value);
-
-		// })(0.01);
+		function editContent() {
+			let target = event.target;
+			let id = $(target).attr('id');
+			console.log(id);
+		}
 
 	</script>
 
