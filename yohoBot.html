@@ -3,33 +3,178 @@
 <head>
 	<title> Yoho 搬家機器人 </title>
 
-	<script src="/node_modules/jquery-circle-progress/dist/circle-progress.js"></script>
+	<!-- <script src="/node_modules/jquery-circle-progress/dist/circle-progress.js"></script> -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<!-- 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<!-- 	<link rel="stylesheet" href="bootstrap.css" type="text/css"/>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script src="jquery-circle-progress/dist/circle-progress.js"></script>
- -->
+	<script src="bootstrap/js/bootstrap.min.js"></script> -->
+
+	<script src="/socket.io/socket.io.js"></script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-circle-progress/1.2.2/circle-progress.min.js"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<style>
+
+		div {
+			border: 0.1px LightGrey solid;
+		}
+
+		.out {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.in {
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		#circle {
+			margin-top: 30px
+		}
+
+		button {
+			width: 100%;
+		}
+
+	</style>
 
 </head>
 <body>
 
-	<div id="circle">ok</div>
+<!-- Time Modal -->
+
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aira-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Progress</h4>
+				</div> <!-- Header -->
+				<div class="modal-body">
+					<div id="circle" class="in"></div>
+				</div> <!-- Body -->
+				<div class="modal-footer">
+
+
+					<!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+					<!-- <button type="button" class="btn btn-primary">Save Changes</button> -->
+				</div> <!-- Footer -->
+			</div>
+		</div>
+	</div>
+
+<!-- Body -->
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="col-md-4">
+					<!-- TEST -->
+					<div id="circle1" class="in"></div>
+				</div>
+				<div class="col-md-2">
+					<input id="searchBar" type="number" class="form-control">
+				</div>
+				<div class="col-md-1">
+					<input id="searchRange" type="number" class="form-control">
+				</div>
+				<div class="col-md-1">
+					<button id="btn_search" class="btn btn-primary">Search</button>
+				</div>
+				<div class="col-md-4">
+					<!-- TEST -->
+					<button id="btn_test" class="btn btn-danger">TEST</button>
+				</div>
+
+				<script>
+
+					var val1 = 0;
+					var val2 = 0.1;
+
+					$('#btn_test').click(() => {
+
+						progress(val1, val2);
+
+						function progress(from, to) {
+							$('#circle1').circleProgress({
+								animationStartValue: from,
+								value: to,
+								size: 200,
+								fill: {
+									gradient: ["royalblue", "blue"]
+								}
+							});
+						}
+
+						val1 = val2;
+						val2 = val2 + 0.1;
+
+					});
+				</script>
+
+			</div>
+		</div>
+	</div>
+
+<!-- btn_search click event handler -->
+	<script>
+
+		//$('#myModal').modal('show');
+
+		$('#btn_search').click(() => {
+			let numStartAt = $('#searchBar').val();
+			let numCount = $('#searchRange').val();
+			let numEndAt = Number(numStartAt) + Number(numCount);
+
+			console.log("$('#btn_search').click()");
+			console.log("numStartAt: "+numStartAt);
+			console.log("numCount: "+numCount);
+			console.log("numEndAt: "+numEndAt);
+			console.log("------------------------");
+
+			let searchRange = [];
+
+			for (i=numStartAt; i < numEndAt; i++) {
+				searchRange.push(Number(i));
+			}
+
+			socket.emit('btn_search', searchRange);
+			
+		});
+	</script>
+
+
+
 
 	<script>
 
-	test(1);
+		// $('#btn_search').click(() => {
+		// 	$('#myModal').modal('show');
+		// 	setTimeout(test(1), 3000);
+		// });
+
 
 		function test(v) {
 
 		  $('#circle').circleProgress({
+		    animationStartValue: 0.5,
 		    value: v,
 		    size: 200,
 		    fill: {
-		      gradient: ["royalblue", "royalblue"]
+		      gradient: ["royalblue", "blue"]
 		    }
 		  });
 

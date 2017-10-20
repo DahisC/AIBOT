@@ -6,7 +6,8 @@ var http = require('http').Server(app),
 
 //
 
-app.use(express.static('bootstrap/css'));
+app.use(express.static('bootstrap/css/'));
+app.use(express.static('bootstrap/js'));
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
