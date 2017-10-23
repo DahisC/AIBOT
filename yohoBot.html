@@ -117,6 +117,15 @@
 				</div> <!-- Body -->
 				<div class="modal-footer">
 					<h4 id="myModal_title"></h4>
+
+					<script>
+						
+						socket.on('writeInProgress', (text) => {
+							$('#myModal_title').text(text);
+						});
+
+					</script>
+
 					<div id="myModal_message"></div>
 
 
@@ -267,10 +276,10 @@
 							$('#displayArea table tr').last().append('<td rowspan="4" class="_img"><img src="'+searchResults[i].Img+'"></td><td rowspan="4" class="_isLive">香港方面<br><br>'+searchResults[i].isLive+'</td><td colspan="5">'+searchResults[i].Brand+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
 						//ondblclick="editContent()"
-							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'_name" colspan="5" class="_name" ondblclick="editContent()">'+searchResults[i].Name+'</td>');
+							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'" colspan="5" class="_name" ondblclick="editName()">'+searchResults[i].Name+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
 						//ondblclick="editContent()"
-							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'_price" class="_price" colspan="5" ondblclick="editContent()">$ '+searchResults[i].Price+'</td>');
+							$('#displayArea table tr').last().append('<td id="'+searchResults[i].Num+'" class="_price" colspan="5" ondblclick="editPrice()">$ '+searchResults[i].Price+'</td>');
 						$('#displayArea table tbody').last().append('<tr></tr>');
 							$('#displayArea table tr').last().append('<td colspan="5">'+searchResults[i].ClassB+" > "+searchResults[i].ClassA+'</td>');
 
@@ -302,8 +311,21 @@
 
 		// 寫入表單按鈕
 		function btn_writeIn() {
-			console.log("function btn_writeIn()");
-			console.log(global_searchResults);		
+			console.log(global_searchResults);
+
+			$('.modal-title').text("Writing Progress");
+			$('#myModal_title').text("準備寫入表單 ...");
+
+			$('.modal-body').empty();
+			for (i=0; i < global_searchResults.length; i++) {
+				let t = global_searchResults[i];
+				$('.modal-body').append('<p>'+t.Num+' - '+t.Name+' ... <span id="'+t.Num+'" class="writeInStatus"></span></p>');
+			}
+
+			$('#myModal').modal('show');
+
+			socket.emit('writeIn', global_searchResults);
+
 		}
 
 	</script>
@@ -318,21 +340,41 @@
 
 	<script>
 
-		function editContent() {
+		function editName() {
 			let target = event.target;
 			let id = $(target).attr('id');
 
 			var value = prompt();
+			$(target).text(value);
 
-			$('div#_'+id+' td')
-		
-			for (i=0; i<global_searchResults.length; i++) {
-				console.log(global_searchResults[i]);
-				if (id == global_searchResults[i].Num) {
-					global_searchResults
+			for (i=0; i < global_searchResults.length; i++) {
+				let t = global_searchResults[i]
+				console.log(t);
+				if (t.Num == id) {
+					t.Name = value;
 				}
 			}
+
 		}
+
+		function editPrice() {
+			let target = event.target;
+			let id = $(target).attr('id');
+
+			var value = prompt();
+			$(target).text("$ "+value);
+
+			for (i=0; i < global_searchResults.length; i++) {
+				let t = global_searchResults[i]
+				console.log(t);
+				if (t.Num == id) {
+					t.Price = Number(value);
+				}
+			}
+
+		}
+
+
 
 	</script>
 

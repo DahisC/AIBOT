@@ -63,6 +63,20 @@ io.on('connection', function(socket) {
 		}
 	});
 
+	socket.on('writeIn', (searchResults) => {
+		var yohoSheet = require('./yohoBot/yohoSheet.js')
+		yohoSheet.getStatus(searchResults, func1, func2);
+
+		function func1(text) {
+			io.emit('writeInProgress', text);
+		}
+
+		function func2(text) {
+			io.emit('writeInStatus', text);
+		}
+
+	});
+
 });
 
 // 
