@@ -17,6 +17,10 @@ app.get('/yohoBot', function(req, res) {
 	res.sendFile(__dirname + '/yohoBot.html');
 });
 
+app.get('/dailygo', function(req, res) {
+	res.sendFile(__dirname + '/dailygo.html');
+});
+
 http.listen(port, function() {
 	console.log("Server started on port: "+port);
 });
@@ -64,7 +68,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('writeIn', (searchResults) => {
-		var yohoSheet = require('./yohoBot/yohoSheet.js')
+		var yohoSheet = require('./yohoBot/yohoSheet.js');
 		yohoSheet.getStatus(searchResults, func1, func2);
 
 		function func1(text) {
@@ -75,6 +79,13 @@ io.on('connection', function(socket) {
 			io.emit('writeInStatus', text);
 		}
 
+	});
+
+	// // --------------- DailyGo -----------------
+
+	socket.on('dailyGoLaunch', () => {
+		var DailyGo = require('./DailyGo/DailyGoBot.js');
+		DailyGo.launch();
 	});
 
 });

@@ -26,13 +26,40 @@ exports.getStatus = function(addList, displayFunc1, displayFunc2) {
 				offset: 1,
 				orderby: 'Num'
 			}, function(err, rows) {
-				addRow(addList, rows, displayFunc1, displayFunc2);
+				// 此處呼叫寫入函式
+
+				var rowsArray = [];
+
+				for (i=0; i < rows.length; i++) {
+					rowsArray.push(rows[i].num);
+				}
+
+				addRow(addList, rowsArray, displayFunc1, displayFunc2, 0);
 			});
 		}
 
 		],	function(err) {
 			if (err) { console.log('Google Spreadsheet Error: '+err)};
 	});
+
+}
+
+function addRow(addList, existsNum, displayFunc1, displayFunc2, currentIndex) {
+
+	for (i=0; i < existsNum.length; i++) {
+		console.log("Checking Num "+existsNum[i].num);
+		if (addList[currentIndex] == existsNum) {
+			console.log("!!");
+			currentIndex++;
+			addRow(addList, existsNum, displayFunc1, displayFunc2, currentIndex);
+		} else {
+			console.log("excute function");
+			currentIndex++;
+			addRow(addList, existsNum, displayFunc1, displayFunc2, currentIndex);
+		}
+	}
+
+
 
 }
 
