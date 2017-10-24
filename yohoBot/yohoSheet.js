@@ -36,76 +36,69 @@ exports.getStatus = function(addList, displayFunc1, displayFunc2) {
 
 }
 
-function addRow(addList, rows, displayFunc1, displayFunc2) {
+// function addRow(addList, rows, displayFunc1, displayFunc2) {
 
-	async.series([
+// 	var index = 0;
 
-		function setAuth(step) {
-			var creds = require('./AIBOT-7ac8efcc5bc6.json');
-			doc.useServiceAccountAuth(creds, step);
-		},
+// 	excute(index);
 
-		function getInfoAndWorksheets(step) {
-			doc.getInfo(function(err, info) {
-				console.log('Loaded doc: '+info.title+' by '+info.author.email);
-				sheet = info.worksheets[0];
-				step();
-			});
-		},
+// 	function excute(index) {
 
-		function addRows(step) {
+// 		if (index == addList.length ) {
+// 			console.log("寫入完成");
+// 			return;
+// 		}
 
-			displayFunc2("表單寫入中 ...");
+// 		for (i=0; i < rows.length; i++) {
+// 			console.log("目前寫入："+addList[index].Num);
 
-			var index = 0;
-			writeIn(addList, index);
+// 			if (rows[i].num == addList[index]) {
+// 				console.log("碰撞偵測！");
+// 				index++;
+// 				excute(index);
+// 				return;
+// 			} else {
+// 				console.log("開始寫入 ...");
+// 				startWrite();
+// 			}
+// 		}
 
-			function writeIn(addList, ii) {
+// 		function startWrite() {
 
-				console.log("++++++++++++++++++");
-				console.log(addList[0].Name);
-				console.log(ii);
+// 			async.series([
 
-				// 碰撞偵測
-				for (i=0; i < rows.length; i++) {
-					if (rows[i].num == addList[index].Num) {
-						index++;
-						writeIn(addList, index);
-						return;
-					}
-				}
+// 				function setAuth(step) {
+// 					var creds = require('./AIBOT-7ac8efcc5bc6.json');
+// 					doc.useServiceAccountAuth(creds, step);
+// 				},
 
-				// 完成偵測
-				if (index == addList.length) {
-					sheet.getRows({
-						offset: 1,
-						orderby: 'Num'
-					}, function(err, rows) {
-						//callback(rows);
-						
-						displayFunc2("表單寫入完成");
+// 				function getInfoAndWorksheets(step) {
+// 					doc.getInfo(function(err, info) {
+// 						console.log('Loaded doc: '+info.title+' by '+info.author.email);
+// 						sheet = info.worksheets[0];
+// 						step();
+// 					});
+// 				},
 
-						return; 
-					});
-				} else {
+// 				function addRows(step) {
 
-					sheet.addRow({
-						'islive': addList[index].isLive,
-						'num': addList[index].Num,
-						'name': addList[index].Name,
-						'sourcecode': addList[index].Code,
-						// 'sourcecode': addList[index]
-					}, function(err, rows) {
+// 					sheet.addRow({
+// 						'islive': addList[index].isLive,
+// 						'num': addList[index].Num,
+// 						'name': addList[index].Name,
+// 						'sourcecode': addList[index].Code,
+// 						// 'sourcecode': addList[index]
+// 					}, 
+// 					function(err, rows) {
+// 						index++;
+// 						excute(index);
+// 					});
+// 				}
+// 			],	function(err) {
+// 					if (err) { console.log('Google Spreadsheet Error: '+err)};
+// 			});
+// 		}
 
+// 	}
 
-					});
-
-				}
-			}
-		}
-
-		],	function(err) {
-			if (err) { console.log('Google Spreadsheet Error: '+err)};
-	});
-
-}
+// }

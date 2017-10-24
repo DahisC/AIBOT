@@ -246,6 +246,7 @@ exports.launching = function(product) {
 					.click();
 
 				// 回產品編輯頁
+				driver.sleep(3000);
 				driver.findElement(By.css('div.list-div tr:nth-child(2) a:nth-child(2)'))
 					.click();
 				driver.sleep(3000);
@@ -475,7 +476,7 @@ exports.launching = function(product) {
 				if (product.video !== 0) {
 					product.video = "https://youtu.be/"+product.video;
 					driver.findElement(By.xpath('//*[@id="videoSet"]'))
-						.sendKeys("123");
+						.sendKeys(product.video);
 					driver.findElement(By.xpath('//*[@id="videoSet"]'))
 						.clear();
 					driver.findElement(By.xpath('//*[@id="videoSet"]'))
@@ -639,10 +640,10 @@ exports.launching = function(product) {
 				// 分類
 				driver.findElement(By.css('#exhL1 option:nth-child('+product.pchomeA+')'))
 					.click();
-				driver.sleep(1000);
+				driver.sleep(2000);
 				driver.findElement(By.css('#exhL2 option:nth-child('+product.pchomeB+')'))
 					.click();
-				driver.sleep(1000);
+				driver.sleep(2000);
 				if (!(isNaN(product.pchomeC))) {
 					driver.findElement(By.css('#exhL3 option:nth-child('+product.pchomeC+')'))
 					.click();
