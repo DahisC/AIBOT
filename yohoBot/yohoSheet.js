@@ -94,6 +94,7 @@ function addRow(addList, existsNum, displayFunc1, displayFunc2, currentIndex) {
 					'classb': addList[index].ClassB,
 					'classc': addList[index].ClassC,
 					'sourcecode': addList[index].Code,
+					'warranty': addList[index].Warranty,
 					// 'sourcecode': addList[index]
 				}, 
 				function(err, rows) {

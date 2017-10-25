@@ -35,7 +35,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 
 		var $ = cheerio.load(b);
 
-		function productObj(isLive ,Num, Img, Brand, Name, Price, ClassA, ClassB, ClassC, Code) {
+		function productObj(isLive ,Num, Img, Brand, Name, Price, ClassA, ClassB, ClassC, Code, Warranty) {
 			this.isLive = isLive;
 			this.Num = Num;
 			this.Img = Img;
@@ -46,6 +46,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 			this.ClassB = ClassB;
 			this.ClassC = ClassC;
 			this.Code = Code;
+			this.Warranty = Warranty;
 		}
 
 		// 商品名稱
@@ -88,6 +89,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 			productName = productName.replace(/相片打印/g, "相片列印");
 			productName = productName.replace(/打印/g, "列印");
 			productName = productName.replace(/外置硬碟/g, "外接硬碟");
+			productName = productName.replace(/手提電話/g, "手機");
 
 		var productPrice = $('del.goods-market-price').text();
 		if (productPrice != '') { 
@@ -120,6 +122,17 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 		var productClassB = $('div.menus a:nth-of-type(3)').text();
 		var productClassC = $('div.menus a:nth-of-type(4)').text();
 
+		var Warranty = $('div#seller_note div.content').text();
+		var productWarranty;
+
+		if (Warranty.indexOf("原裝行貨") >= 0) {
+			productWarranty = "海外公司貨";
+		} else if (Warranty.indexOf("保養條款不適用本產品") >= 0) {
+			productWarranty = "配件與消耗品";
+		} else {
+			productWarranty = "歐美日水貨";
+		}
+
 		var productCode = $('#goods_desc div.content').html();
 
 		var isLive;
@@ -132,7 +145,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 			isLive = "正常供貨";
 		}
 
-		var product = new productObj(isLive, productNumber, productImg, productBrand, productName, productPrice, productClassA, productClassB, productClassC, productCode);
+		var product = new productObj(isLive, productNumber, productImg, productBrand, productName, productPrice, productClassA, productClassB, productClassC, productCode, productWarranty);
 
 		//console.log(searchRange[index]+" - "+productName);
 
