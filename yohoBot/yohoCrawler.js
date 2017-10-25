@@ -35,7 +35,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 
 		var $ = cheerio.load(b);
 
-		function productObj(isLive ,Num, Img, Brand, Name, Price, ClassA, ClassB, Code) {
+		function productObj(isLive ,Num, Img, Brand, Name, Price, ClassA, ClassB, ClassC, Code) {
 			this.isLive = isLive;
 			this.Num = Num;
 			this.Img = Img;
@@ -44,6 +44,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 			this.Price = Price;
 			this.ClassA = ClassA;
 			this.ClassB = ClassB;
+			this.ClassC = ClassC;
 			this.Code = Code;
 		}
 
@@ -62,9 +63,34 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 		}
 
 		var productName = $('dt.product_name h1').text();
+			productName = productName.replace(/香港行貨/g, "台灣公司貨");
+			productName = productName.replace(/智能手機/g, "智慧型手機");
+			productName = productName.replace(/即影即有相機/g, "拍立得相機");
+			productName = productName.replace(/單鏡反光相機/g, "單眼相機");
+			productName = productName.replace(/洗面機/g, "洗臉機");
+			productName = productName.replace(/導入導出機/g, "導入導出儀");
+			productName = productName.replace(/剃鬚刨/g, "刮鬍刀");
+			productName = productName.replace(/蒸面機/g, "蒸臉儀");
+			productName = productName.replace(/脫毛/g, "美體除毛");
+			productName = productName.replace(/剃毛器/g, "美體刀");
+			productName = productName.replace(/雪櫃/g, "冰箱");
+			productName = productName.replace(/抽濕機/g, "除濕機");
+			productName = productName.replace(/電熱水煲/g, "熱水瓶");
+			productName = productName.replace(/焗爐/g, "烤箱");
+			productName = productName.replace(/蒸焗爐/g, "蒸氣烤箱");
+			productName = productName.replace(/榨汁機/g, "果汁機");
+			productName = productName.replace(/多士爐/g, "烤麵包機");
+			productName = productName.replace(/多士焗爐/g, "烤箱");
+			productName = productName.replace(/電子高速煲/g, "電子壓力鍋");
+			productName = productName.replace(/慢煮機/g, "舒肥機");
+			productName = productName.replace(/電飯煲/g, "電鍋");
+			productName = productName.replace(/電筒/g, "手電筒");
+			productName = productName.replace(/相片打印/g, "相片列印");
+			productName = productName.replace(/打印/g, "列印");
+			productName = productName.replace(/外置硬碟/g, "外接硬碟");
 
 		var productPrice = $('del.goods-market-price').text();
-		if (productPrice == '') { 
+		if (productPrice != '') { 
 			productPrice = $('strong.goods-price').text();
 			productPrice = productPrice.split(' ');
 			productPrice = Number(productPrice[1]);
@@ -72,8 +98,27 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 			productPrice = productPrice.split(' ');
 			productPrice = Number(productPrice[2]);
 		}
-		var productClassB = $('div.menus a:nth-of-type(2)').text();
-		var productClassA = $('div.menus a:nth-of-type(3)').text();
+
+		console.log("1 - "+productPrice);
+		productPrice = productPrice * 4 * 1.12;
+		console.log("2 - "+productPrice);
+		if (productPrice < 5000) {
+			productPrice = productPrice + 200;
+		} else {
+			productPrice = productPrice + 500;
+		}
+		console.log("3 - "+productPrice);
+
+		productPrice = Math.round(productPrice);
+		productPrice = productPrice.toString();
+		productPrice = productPrice.split('');
+		productPrice[productPrice.length-1] = "0";
+		productPrice[productPrice.length-2] = "8";
+		productPrice = productPrice.join('');
+
+		var productClassA = $('div.menus a:nth-of-type(2)').text();
+		var productClassB = $('div.menus a:nth-of-type(3)').text();
+		var productClassC = $('div.menus a:nth-of-type(4)').text();
 
 		var productCode = $('#goods_desc div.content').html();
 
@@ -87,7 +132,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 			isLive = "正常供貨";
 		}
 
-		var product = new productObj(isLive, productNumber, productImg, productBrand, productName, productPrice, productClassA, productClassB, productCode);
+		var product = new productObj(isLive, productNumber, productImg, productBrand, productName, productPrice, productClassA, productClassB, productClassC, productCode);
 
 		//console.log(searchRange[index]+" - "+productName);
 

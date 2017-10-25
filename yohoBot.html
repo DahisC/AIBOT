@@ -71,6 +71,10 @@
 			border: 1px red solid;
 		}
 
+		td {
+			border: 1px red solid;
+		}
+
 	</style>
 
 </head>
@@ -85,10 +89,10 @@
 					<button type="button" class="close" data-dismiss="modal" aira-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="myModalLabel">Searching Progress</h4>
+					<h4 class="modal-title" id="myModalLabel"></h4>
 				</div> <!-- Header -->
 				<div class="modal-body">
-					<div id="circle" class="in"></div>
+					<!-- <div id="circle" class="in"></div> -->
 					<script>
 					var fromVal;
 					var toVal;
@@ -211,6 +215,9 @@
 				searchRange.push(Number(i));
 			}
 
+			$('div.modal-body').empty();
+			$('div.modal-body').append('<div id="circle" class="in"></div>');
+
 			socket.emit('btn_search', searchRange);
 
 			/* ----- 模塊顯示 ----- */
@@ -227,6 +234,7 @@
 
 				function text1() {
 					$('#myModal_title').text("爬蟲工作中 Qmmmm ..");
+					$('.modal-title').text("Searching Progress");
 				}
 			}
 
@@ -314,12 +322,16 @@
 			console.log(global_searchResults);
 
 			$('.modal-title').text("Writing Progress");
-			$('#myModal_title').text("準備寫入表單 ...");
+			$('#myModal_title').text("寫入表單中 ...");
 
 			$('.modal-body').empty();
 			for (i=0; i < global_searchResults.length; i++) {
 				let t = global_searchResults[i];
-				$('.modal-body').append('<p>'+t.Num+' - '+t.Name+' ... <span id="'+t.Num+'" class="writeInStatus"></span></p>');
+
+				$('.modal-body').append('<table></table>');
+				$('.modal-body table').last().append('<tr><td style="width: 50px;">　'+t.Num+'　</td><td style="width: 350px;">　'+t.Name+'　</td><td id="'+t.Num+'" style="width: 50px;">　準備寫入　</td></tr>')
+
+				// $('.modal-body').append('<p>'+t.Num+' - '+t.Name+' ... <span id="'+t.Num+'" class="writeInStatus"></span></p>');
 			}
 
 			$('#myModal').modal('show');
@@ -327,6 +339,10 @@
 			socket.emit('writeIn', global_searchResults);
 
 		}
+
+		socket.on('writeInStatus', function(text, num) {
+			$('.modal-body table td#'+num).text("　"+text+"　");
+		});
 
 	</script>
 		<!-- 處理按鈕 -->
@@ -344,7 +360,7 @@
 			let target = event.target;
 			let id = $(target).attr('id');
 
-			var value = prompt();
+			var value = prompt('', $(target).text());
 			$(target).text(value);
 
 			for (i=0; i < global_searchResults.length; i++) {

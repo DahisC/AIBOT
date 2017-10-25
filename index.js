@@ -75,8 +75,8 @@ io.on('connection', function(socket) {
 			io.emit('writeInProgress', text);
 		}
 
-		function func2(text) {
-			io.emit('writeInStatus', text);
+		function func2(text, num) {
+			io.emit('writeInStatus', text, num);
 		}
 
 	});
