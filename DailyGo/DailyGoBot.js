@@ -63,9 +63,60 @@ function getSheet() {
 	});
 }
 
+function writeInSheet(i, url, callback) {
+	var GoogleSpreadsheet = require('google-spreadsheet');
+	var async = require('async');
+
+	var doc = new GoogleSpreadsheet('1AVBztxQ3H4HFTulAoJ-gr17KDoNtNB1ajK5TrMxJFxI');
+	var sheet;
+
+	async.series([
+
+		function setAuth(step) {
+			var creds = require('./AIBOT-7ac8efcc5bc6.json');
+			doc.useServiceAccountAuth(creds, step);
+		},
+
+		function getInfoAndWorksheets(step) {
+			doc.getInfo(function(err, info) {
+				console.log('Loaded doc: '+info.title+' by '+info.author.email);
+				sheet = info.worksheets[0];
+				step();
+			});
+		},
+
+		function workingWithCells(step) {
+
+			var row = i + 1;
+			var col = 1;
+
+			sheet.getCells({
+				'min-row': row,
+				'max-row': row,
+				'min-col': col,
+				'max-col': col,
+				'return-empty': true
+			},	function(err, cells) {
+				var cell = cells[0];
+				var formula = '=HYPERLINK("'+url+'","商品頁面")';
+
+				console.log("將網址 "+url+" 寫入儲存格中...");
+				cell.setValue(formula, null);
+				callback();
+
+			});
+		}
+
+		],	function(err) {
+			if (err) { console.log('Google Spreadsheet Error: '+err)};
+	});
+}
+
 function prepareLaunch(rows, index) {
 
 	var i = index;
+
+	console.log("第 "+(i+1)+" 列～～～～～～～～～～");
 
 	console.log(i+'/'+rows.length);
 
@@ -122,6 +173,9 @@ function prepareLaunch(rows, index) {
 							}
 							if (rows[i].img4 != '') {
 								request(rows[i].img4).pipe(fs.createWriteStream(productDir+'image4.png'));
+							}
+							if (rows[i].img5 != '') {
+								request(rows[i].img5).pipe(fs.createWriteStream(productDir+'image5.png'));
 							}
 		 					launchProduct();
 						}
@@ -212,56 +266,96 @@ function prepareLaunch(rows, index) {
 			// 切換至產品相冊
 			driver.wait(until.elementLocated(By.css('#gallery-tab'))).then((ele) => {
 				ele.click().then(() => {
-					checkImage();
+					driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(3) > td > a'))).then((ele) => {
+						console.log("載入產品相冊，偵測圖片 ...");
+						checkImage();
+					});
 				});
 			});
 
 			function checkImage() {
 
-				checkImage2();
+				clickAddButton();
 
-				function checkImage2() {
-					// 上傳第二張圖片
+				function clickAddButton() {
 					if (rows[i].img2 != '') {
-						console.log("- 上傳第 2 張圖片。");
-						driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(3) > td > a'))).then((ele) => {
-							ele.click().then(() => {
-								driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(3) > td > input[type=file]'))).then((ele) => {
-									ele.sendKeys(productDir+"image2.png");
-									checkImage3();
-								});
+						console.log("準備上傳第 2 張圖片 ...");
+						if (rows[i].img3 != '') {
+							console.log("準備上傳第 3 張圖片 ...");
+							driver.findElement(By.css('#gallery-table > tbody > tr:nth-child(3) > td > a')).click().then(() => {
+								if (rows[i].img4 != '') {
+									console.log("準備上傳第 4 張圖片 ...");
+									driver.findElement(By.css('#gallery-table > tbody > tr:nth-child(3) > td > a')).click().then(() => {
+										if(rows[i].img5 != '') {
+											console.log("準備上傳第 5 張圖片 ...");
+											driver.findElement(By.css('#gallery-table > tbody > tr:nth-child(3) > td > a')).click().then(() => {
+												uploadImage();
+											});
+										} else {
+											uploadImage();
+										}
+									});
+								} else {
+									uploadImage();
+								}
 							});
-						});
+						} else {
+							uploadImage();
+						}
+					} else {
+						uploadImage();
 					}
 				}
 
-				function checkImage3() {
-					// 上傳第三張圖片
+				function uploadImage() {
+					if (rows[i].img2 != '') {
+						console.log(" - 上傳第 2 張圖片。");
+						driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(3) > td > input[type=file]'))).then((ele) => {
+							ele.sendKeys(productDir+"image2.png");
+						});
+					}
 					if (rows[i].img3 != '') {
-						console.log("- 上傳第 3 張圖片。");
-						driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(3) > td > a'))).then((ele) => {
-							ele.click().then(() => {
-								driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(4) > td > input[type=file]'))).then((ele) => {
-									ele.sendKeys(productDir+"image3.png");
-									checkImage4();
-								});
-							});
+						console.log(" - 上傳第 3 張圖片。");
+						driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(4) > td > input[type=file]'))).then((ele) => {
+							ele.sendKeys(productDir+"image3.png");
 						});
 					}
+					if (rows[i].img4 != '') {
+						console.log(" - 上傳第 4 張圖片。");
+						driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(5) > td > input[type=file]'))).then((ele) => {
+							ele.sendKeys(productDir+"image4.png");
+						});
+					}
+					if (rows[i].img5 != '') {
+						console.log(" - 上傳第 5 張圖片。");
+						driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(6) > td > input[type=file]'))).then((ele) => {
+							ele.sendKeys(productDir+"image5.png");
+						});
+					}
+					launchConfirm();
 				}
 
-				function checkImage4() {
-					// 上傳第四張圖片
-					if (rows[i].img4 != '') {
-						console.log("- 上傳第 4 張圖片。");
-						driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(3) > td > a'))).then((ele) => {
-							ele.click().then(() => {
-								driver.wait(until.elementLocated(By.css('#gallery-table > tbody > tr:nth-child(5) > td > input[type=file]'))).then((ele) => {
-									ele.sendKeys(productDir+"image4.png");
+				function launchConfirm() {
+					driver.wait(until.elementLocated(By.css('input[value=" 確定 "]'))).then((ele) => {
+						console.log("編輯完成，送出頁面 ...");
+						ele.click().then(() => {
+							console.log(" - 頁面載入完成。");
+							driver.wait(until.titleIs('ECSHOP 管理中心 - 商品列表')).then(() => {
+								driver.wait(until.elementLocated(By.css('div.list-div tr:nth-child(3) a'))).then((ele) => {
+									ele.getAttribute('href').then((href) => {
+										console.log("商品 "+rows[i].name+" 上架成功。");
+										console.log("-");
+										driver.quit();
+										writeInSheet((i+1), href, function() {
+											i++;
+											prepareLaunch(rows, i);
+										});
+									});
 								});
 							});
 						});
-					}
+
+					});
 				}
 			}
 		}
