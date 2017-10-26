@@ -163,20 +163,9 @@
 				</div>
 
 				<script>
+					$('#btn_launch').click(() => {
 
-					$('#btn_test').click(() => {
-
-						//progress(val1, val2);
-
-						$('#circle').circleProgress({
-							animationStartValue: 0,
-							value: 0,
-							size: 200,
-							fill: { gradient: ["royalblue", "blue"] }
-						});
-
-						// val1 = val2;
-						// val2 = val2 + 0.1;
+						socket.emit('yohoLaunch');
 
 					});
 				</script>

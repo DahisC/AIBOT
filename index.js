@@ -81,6 +81,11 @@ io.on('connection', function(socket) {
 
 	});
 
+	socket.on('yohoLaunch', () => {
+		var yohoBot = require('./yohoBot/yohoBot.js');
+		yohoBot.launch();
+	});
+
 	// // --------------- DailyGo -----------------
 
 	socket.on('dailyGoLaunch', () => {

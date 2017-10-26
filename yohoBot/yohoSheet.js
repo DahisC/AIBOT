@@ -84,9 +84,11 @@ function addRow(addList, existsNum, displayFunc1, displayFunc2, currentIndex) {
 
 			function addRows(step) {
 
+				var formula = '=HYPERLINK("https://www.yohohongkong.com/product/'+addList[index].Num+'","'+addList[index].Num+'")';
+
 				sheet.addRow({
 					'islive': addList[index].isLive,
-					'num': addList[index].Num,
+					'num': formula,
 					'name': addList[index].Name,
 					'price': addList[index].Price,
 					'img': addList[index].Img,
