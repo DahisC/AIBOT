@@ -319,7 +319,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 		var productWarranty;
 
 		if (Warranty.indexOf("原裝行貨") >= 0) {
-			productWarranty = "海外公司貨";
+			productWarranty = "香港公司貨";
 		} else if (Warranty.indexOf("保養條款不適用本產品") >= 0) {
 			productWarranty = "配件與消耗品";
 		} else {
