@@ -1141,3 +1141,38 @@
 [1031/104526.690:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
 [1031/104526.701:ERROR:exception_snapshot_win.cc(87)] thread ID 4240 not found in process
 [1031/104526.702:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/120515.683:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/120515.685:ERROR:exception_snapshot_win.cc(87)] thread ID 2104 not found in process
+[1031/120515.685:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/120919.950:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/120919.961:ERROR:exception_snapshot_win.cc(87)] thread ID 12240 not found in process
+[1031/120919.961:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/121023.402:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[1031/121023.403:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[1031/121023.403:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[1031/121023.403:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[1031/121023.403:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[1031/121023.403:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/121023.408:ERROR:exception_snapshot_win.cc(87)] thread ID 5920 not found in process
+[1031/121023.408:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/122506.783:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/122506.784:ERROR:exception_snapshot_win.cc(87)] thread ID 6152 not found in process
+[1031/122506.784:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/123703.336:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/123703.343:ERROR:exception_snapshot_win.cc(87)] thread ID 11504 not found in process
+[1031/123703.343:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/130609.841:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/130609.856:ERROR:exception_snapshot_win.cc(87)] thread ID 1356 not found in process
+[1031/130609.856:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/131332.351:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/131332.359:ERROR:exception_snapshot_win.cc(87)] thread ID 10920 not found in process
+[1031/131332.359:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/132127.312:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/132127.313:ERROR:exception_snapshot_win.cc(87)] thread ID 900 not found in process
+[1031/132127.313:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/132546.892:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/132546.893:ERROR:exception_snapshot_win.cc(87)] thread ID 7528 not found in process
+[1031/132546.893:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[1031/133331.576:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。  (0xc0000022)
+[1031/133331.577:ERROR:exception_snapshot_win.cc(87)] thread ID 6028 not found in process
+[1031/133331.577:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed

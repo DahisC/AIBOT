@@ -89,7 +89,7 @@ function addRow(addList, existsNum, displayFunc1, displayFunc2, currentIndex) {
 				sheet.addRow({
 					'islive': addList[index].isLive,
 					'num': formula,
-					'brand': addList[index].Brand,
+					'brand': addList[index].Brand,	
 					'name': addList[index].Name,
 					'price': addList[index].Price,
 					'img': addList[index].Img,
