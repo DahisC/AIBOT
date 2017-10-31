@@ -64,7 +64,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 		}
 
 		var productName = $('dt.product_name h1').text();
-			productName = productName.replace(/香港行貨/g, "台灣公司貨");
+			productName = productName.replace(/香港行貨/g, "海外公司貨");
 			productName = productName.replace(/智能手機/g, "智慧型手機");
 			productName = productName.replace(/即影即有相機/g, "拍立得相機");
 			productName = productName.replace(/單鏡反光相機/g, "單眼相機");

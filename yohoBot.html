@@ -166,6 +166,7 @@
 					$('#btn_launch').click(() => {
 
 						socket.emit('yohoLaunch');
+						
 
 					});
 				</script>
@@ -262,6 +263,7 @@
 				$('div#displayArea').append('<button id="btn_writeIn" class="btn btn-success" onclick="btn_writeIn()" style="margin: 30px auto 30px auto;">將搜尋結果寫入表單</button>');
 
 			for (i=0; i < searchResults.length; i++) {
+
 				$('div#displayArea').append('<div id="_'+searchResults[i].Num+'" class="results"></div>')
 					$('div#_'+searchResults[i].Num).append('<table class="table-bordered"></table>');
 					$('#displayArea table').last().append('<tbody></tbody>');
@@ -290,6 +292,7 @@
 
 
 			changeColor();
+			checkStrLength();
 
 			function changeColor() {
 				for (i=0; i < searchResults.length; i++) {
@@ -310,22 +313,30 @@
 		function btn_writeIn() {
 			console.log(global_searchResults);
 
-			$('.modal-title').text("Writing Progress");
-			$('#myModal_title').text("寫入表單中 ...");
-
-			$('.modal-body').empty();
-			for (i=0; i < global_searchResults.length; i++) {
-				let t = global_searchResults[i];
-
-				$('.modal-body').append('<table></table>');
-				$('.modal-body table').last().append('<tr><td style="width: 50px;">　'+t.Num+'　</td><td style="width: 350px;">　'+t.Name+'　</td><td id="'+t.Num+'" style="width: 50px;">　準備寫入　</td></tr>')
-
-				// $('.modal-body').append('<p>'+t.Num+' - '+t.Name+' ... <span id="'+t.Num+'" class="writeInStatus"></span></p>');
+			if (!checkingBoolean) {
+				alert("請先修改超出字元數的商品名稱（紅色）");
+			} else {
+				checked();
 			}
 
-			$('#myModal').modal('show');
+			function checked() {
+				$('.modal-title').text("Writing Progress");
+				$('#myModal_title').text("寫入表單中 ...");
 
-			socket.emit('writeIn', global_searchResults);
+				$('.modal-body').empty();
+				for (i=0; i < global_searchResults.length; i++) {
+					let t = global_searchResults[i];
+
+					$('.modal-body').append('<table></table>');
+					$('.modal-body table').last().append('<tr><td style="width: 50px;">　'+t.Num+'　</td><td style="width: 350px;">　'+t.Name+'　</td><td id="'+t.Num+'" style="width: 50px;">　準備寫入　</td></tr>')
+
+					// $('.modal-body').append('<p>'+t.Num+' - '+t.Name+' ... <span id="'+t.Num+'" class="writeInStatus"></span></p>');
+				}
+
+				$('#myModal').modal('show');
+
+				socket.emit('writeIn', global_searchResults);
+			}
 
 		}
 
@@ -349,17 +360,54 @@
 			let target = event.target;
 			let id = $(target).attr('id');
 
-			var value = prompt('', $(target).text());
-			$(target).text(value);
+			var defaultValue = $(target).text();
+			var value = prompt('目前字數：'+defaultValue.length+'（需 <= 45）', defaultValue);
 
-			for (i=0; i < global_searchResults.length; i++) {
-				let t = global_searchResults[i]
-				console.log(t);
-				if (t.Num == id) {
-					t.Name = value;
+			if (value == null) {
+				//$(target).text(value);
+				console.log("cancel");
+			} else if (value == '') {
+				$(target).text(defaultValue);
+
+				for (i=0; i < global_searchResults.length; i++) {
+					let t = global_searchResults[i];
+					if (t.Num == id) {
+						t.Name = defaultValue;
+						console.log(t);
+					}
+				}
+			} else {
+				$(target).text(value);
+
+				for (i=0; i < global_searchResults.length; i++) {
+					let t = global_searchResults[i];
+					if (t.Num == id) {
+						t.Name = value;
+						console.log(t);
+					}
 				}
 			}
 
+			checkStrLength();
+
+			//$(target).text(value);
+		}
+
+		var checkingBoolean = false;
+		function checkStrLength() {
+			checkingBoolean = true;
+			for (i=0; i < global_searchResults.length; i++) {
+				let t = global_searchResults[i];
+				
+				console.log(t.Name.length);
+
+				if (t.Name.length > 45) {
+					$('div#_'+t.Num+' ._name').css('color', "#F08080");
+					checkingBoolean = false;
+				} else {
+					$('div#_'+t.Num+' ._name').css('color', "#000000");
+				}
+			}
 		}
 
 		function editPrice() {
