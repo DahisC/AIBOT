@@ -582,10 +582,10 @@ function prepareLaunch(rows, index) {
 				});
 
 				// 上傳圖片
-				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
-					ele.sendKeys(productDir+"image1.png");
-					console.log("- 上傳圖片");
-				});
+				// driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+				// 	ele.sendKeys(productDir+"image1.png");
+				// 	console.log("- 上傳圖片");
+				// });
 
 				// 分類
 				driver.wait(until.elementLocated(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass1+'")]'))).then((ele) => {
@@ -665,19 +665,38 @@ function prepareLaunch(rows, index) {
 					ele.click();
 				});
 
+				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+					ele.sendKeys(productDir+"image1.png");
+					console.log("- 上傳圖片");
+				});
+
 				// 交易與運送方式
 				// 選擇預設值
 				driver.wait(until.elementLocated(By.css('#main_form > div.upload-step.step4 > table > tbody > tr:nth-child(1) > td > ul > li > label > input'))).then((ele) => {
 					ele.click();
+					checkImage();
 				});
 
 				// 
 				
-				driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then(() => {
+				function checkImage() {
 					console.log("頁面完成，等待圖片上傳完畢 ...");
-					driver.sleep(2000);
-					console.log("- 圖片上傳完成，即將上架商品。");
-					driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
+					driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
+						ele.getAttribute('style').then((style) => { 
+							if (style.indexOf('showpic?tofile=') >= 0) {
+								console.log("- 圖片上傳完成，即將上架商品。");
+								driver.sleep(1000);
+								RutenLaunching();
+							} else {
+								driver.sleep(1000);
+								checkImage();
+							}
+						});
+					});
+				}
+
+				function RutenLaunching() {
+					driver.wait(until.elementLocated(By.css('#main_form* > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
 						ele.click().then(() => {
 							driver.wait(until.elementLocated(By.css('input[value="確認送出"]'))).then((ele) => {
 								ele.click().then(() => {
@@ -695,7 +714,7 @@ function prepareLaunch(rows, index) {
 							});
 						});
 					});
-				});
+				}
 				
 				// 下一步
 				// driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
