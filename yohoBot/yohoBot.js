@@ -675,7 +675,7 @@ function prepareLaunch(rows, index) {
 				
 				driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then(() => {
 					console.log("頁面完成，等待圖片上傳完畢 ...");
-					driver.sleep(1500);
+					driver.sleep(2000);
 					console.log("- 圖片上傳完成，即將上架商品。");
 					driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
 						ele.click().then(() => {
