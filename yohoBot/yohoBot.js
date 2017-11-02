@@ -696,7 +696,7 @@ function prepareLaunch(rows, index) {
 				}
 
 				function RutenLaunching() {
-					driver.wait(until.elementLocated(By.css('#main_form* > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
+					driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
 						ele.click().then(() => {
 							driver.wait(until.elementLocated(By.css('input[value="確認送出"]'))).then((ele) => {
 								ele.click().then(() => {
