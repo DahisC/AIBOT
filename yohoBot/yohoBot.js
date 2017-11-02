@@ -638,6 +638,7 @@ function prepareLaunch(rows, index) {
 
 				// 原始碼
 				driver.wait(until.elementLocated(By.css('#mce_7 > button > i'))).then((ele) => {
+					driver.sleep(1000);
 					ele.click().then(() => {
 						driver.wait(until.elementLocated(By.className('mce-textbox'))).then((ele) => {
 							driver.executeScript("arguments[0].value = arguments[1]", ele, notSourceCode).then(() => {
@@ -669,10 +670,11 @@ function prepareLaunch(rows, index) {
 				// 選擇預設值
 				driver.wait(until.elementLocated(By.css('#main_form > div.upload-step.step4 > table > tbody > tr:nth-child(1) > td > ul > li > label > input'))).then((ele) => {
 					ele.click();
+					console.log("頁面完成，等待圖片上傳完畢 ...");
 				});
 
 				// 
-				console.log("頁面完成，等待圖片上傳完畢 ...");
+				
 				driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then(() => {
 					console.log("- 圖片上傳完成，即將上架商品。");
 					driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
