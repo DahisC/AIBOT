@@ -455,6 +455,7 @@ function prepareLaunch(rows, index) {
 						driver.findElement(By.css('input[name="addedBrandName"]')).sendKeys(rows[i].brand);
 						driver.findElement(By.css('#brand_add > a:nth-child(2)')).click();
 						console.log("- 找不到品牌，新增「"+rows[i].brand+"」品牌。");
+						driver.sleep(1000);
 						driver.findElement(By.xpath('//*[@id="general-table"]/tbody/tr[4]/td[2]/select/option[contains(text(), "'+rows[i].brand+'")]')).then((ele) => {
 							ele.click();
 							console.log("- 成功，重新選擇品牌"+rows[i].brand+"！");
