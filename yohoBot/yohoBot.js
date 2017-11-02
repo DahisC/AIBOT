@@ -79,7 +79,7 @@ function writeInSheet(i, header, url, callback) {
 
 		function getInfoAndWorksheets(step) {
 			doc.getInfo(function(err, info) {
-				console.log('Loaded doc: '+info.title+' by '+info.author.email);
+				//console.log('Loaded doc: '+info.title+' by '+info.author.email);
 				sheet = info.worksheets[0];
 				step();
 			});
@@ -94,8 +94,8 @@ function writeInSheet(i, header, url, callback) {
 			(header == 'shopee') ? col = 5 : '';
 			(header == 'pchome') ? col = 6 : '';
 
-			console.log(header);
-			console.log(col);
+			//console.log(header);
+			//console.log(col);
 
 			sheet.getCells({
 				'min-row': i,
