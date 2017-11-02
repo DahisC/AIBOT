@@ -583,10 +583,10 @@ function prepareLaunch(rows, index) {
 				});
 
 				// 上傳圖片
-				// driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
-				// 	ele.sendKeys(productDir+"image1.png");
-				// 	console.log("- 圖片上傳完成。");
-				// });
+				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+					ele.sendKeys(productDir+"image1.png");
+					console.log("- 上傳圖片");
+				});
 
 				// 分類
 				driver.wait(until.elementLocated(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass1+'")]'))).then((ele) => {
@@ -671,19 +671,30 @@ function prepareLaunch(rows, index) {
 					ele.click();
 				});
 
-				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
-					ele.sendKeys(productDir+"image1.png");
-					console.log("- 圖片上傳完成。");
+				// 
+				console.log("頁面完成，等待圖片上傳完畢 ...");
+				driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then(() => {
+					console.log("- 圖片上傳完成，即將上架商品。");
+					driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
+						ele.click().then(() => {
+							driver.wait(until.elementLocated(By.css('input[value="確認送出"]'))).then((ele) => {
+								ele.click().then(() => {
+									driver.wait(until.elementLocated(By.css('body > div > div.rt-wrap > div.rt-text-large.item-upload-result > span'))).then((ele) => {
+										driver.wait(until.elementLocated(By.css('body > div > div.rt-wrap > div.rt-panel.rt-panel-bg.item-finish > div > table > tbody > tr:nth-child(2) > td.text-left > a'))).then((ele) => {
+											ele.getAttribute('href').then((url) => {
+												writeInSheet(i+2, 'ruten', url, function() {
+													driver.sleep(3000);
+													callback();
+												});
+											});
+										});
+									});
+								});
+							});
+						});
+					});
 				});
-
-
-				driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
-					ele.click();
-					var alertText = driver.switchTo().alert().getText();
-					console.log(alertText);
-					//driver.switchTo().alert().dismiss();
-					//end();
-				});
+				
 				// 下一步
 				// driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
 				// 	ele.click().then(() => {
@@ -757,8 +768,6 @@ function prepareLaunch(rows, index) {
 					console.log("- 上傳圖片。");
 				});
 
-				driver.sleep(10000);
-
 				// 店家分類
 				driver.wait(until.elementLocated(By.xpath('//*[@id="product"]/div/div[1]/fieldset/div[1]/div[2]/div/label/select/option[contains(text(), "☆注目商品☆")]'))).then((ele) => {
 					ele.click();
@@ -783,6 +792,7 @@ function prepareLaunch(rows, index) {
 					console.log("- 填入商品價格。");
 				});
 
+
 				// 原始碼
 				driver.wait(until.elementLocated(By.xpath('//*[@id="literalMode"]'))).then((ele) => {
 					ele.click().then(() => {
@@ -790,30 +800,55 @@ function prepareLaunch(rows, index) {
 							driver.executeScript("arguments[0].value = arguments[1]", ele, notSourceCode).then(() => {
 								driver.wait(until.elementLocated(By.xpath('//*[@id="htmlMode"]'))).click();
 								console.log("- 填入原始碼。");
+								console.log("檢查圖片上傳情況 ...");
+								checkImage();
 							});
 						});
 					});
 				});
 
-				// 送出
-				driver.wait(until.elementLocated(By.css('input[value="下一步"]'))).then((ele) => {
-					driver.sleep(1000);
-					ele.click().then(() => {
-						driver.wait(until.elementLocated(By.css('input[value="送出"]'))).then((ele) => {
-							driver.sleep(1000);
-							ele.click().then(() => {
-								driver.wait(until.elementLocated(By.css('span.value a'))).then((ele) => {
-									ele.getAttribute('href').then((url) => {
-										writeInSheet(i+2, 'yahoo', url, function() {
-											driver.sleep(3000);
-											callback();
+				
+
+				//https://s.yimg.com/ur/newauctions/img/transparent.gif
+				//li.yui3-u:nth-child(1) .irens img
+				function checkImage() {
+					driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
+						ele.getAttribute('src').then((src) => {
+							if (src.indexOf('transparent.gif') >= 0) {
+								driver.sleep(1000);
+								checkImage();
+							} else {
+								console.log("- 圖片上傳完成，即將上架商品。");
+								driver.sleep(1000);
+								YahooLaunching();
+							}
+						});
+					});
+				}
+
+				function YahooLaunching() {
+				
+				//送出
+					driver.wait(until.elementLocated(By.css('input[value="下一步"]'))).then((ele) => {
+						driver.sleep(1000);
+						ele.click().then(() => {
+							driver.wait(until.elementLocated(By.css('input[value="送出"]'))).then((ele) => {
+								driver.sleep(1000);
+								ele.click().then(() => {
+									driver.wait(until.elementLocated(By.css('span.value a'))).then((ele) => {
+										ele.getAttribute('href').then((url) => {
+											writeInSheet(i+2, 'yahoo', url, function() {
+												driver.sleep(3000);
+												callback();
+											});
 										});
 									});
 								});
 							});
 						});
 					});
-				});
+				}
+				
 
 
 				//callback();
