@@ -53,7 +53,12 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 		var productNumber = searchRange[index];
 
 		var productImg = $('div.pic_view img:nth-child(1)').attr('src');
+
+		if (productImg.indexOf('.png') >= 0) {
 			productImg = 'http://www.yohohongkong.com' + productImg;
+		} else {
+			productImg = "https://i.imgur.com/qUGd0q6.png";
+		}
 
 		var productBrand = $('div.brand-logo a').attr('href');
 		if (productBrand !== undefined) {

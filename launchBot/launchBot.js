@@ -14,10 +14,10 @@ var chrome = require('selenium-webdriver/chrome');
 // configure browser options ...
 var options = new chrome.Options()
 	//options.addArguments("user-data-dir=D:/Bot/Default");
-	options.addArguments("user-data-dir=C:/Users/khpr/AppData/Local/Google/Chrome/User Data/Default");
+	options.addArguments("user-data-dir=/Users/Dahis/Library/Application Support/Google/Chrome/Default");
 
 //var productDir = "D:/AIBOT/image/";
-var productDir = "C:/Users/khpr/Downloads/AIBOT/image/";
+var productDir = "/Users/Dahis/Desktop/AIBOT/yohoBot/img/";
 /* ------------------------------------------------------------------------------------------------ */
 
 var googleSheet = require('./googleSheet.js');

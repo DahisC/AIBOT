@@ -14,10 +14,10 @@ var chrome = require('selenium-webdriver/chrome');
 // configure browser options ...
 var options = new chrome.Options()
 	//options.addArguments("user-data-dir=D:/Bot/Default");
-	options.addArguments("user-data-dir=C:/Users/khpr/AppData/Local/Google/Chrome/User Data/Default");
+	options.addArguments("user-data-dir=/Users/Dahis/Library/Application Support/Google/Chrome/Default");
 
 //var productDir = "D:/AIBOT/image/";
-var productDir = "C:/Users/khpr/Downloads/AIBOT/yohoBot/img/";
+var productDir = "/Users/Dahis/Desktop/AIBOT/yohoBot/img/";
 /* ------------------------------------------------------------------------------------------------ */
 
 exports.launch = function() {
@@ -582,11 +582,11 @@ function prepareLaunch(rows, index) {
 					ele.click();
 				});
 
-				// 上傳圖片
-				// driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
-				// 	ele.sendKeys(productDir+"image1.png");
-				// 	console.log("- 上傳圖片");
-				// });
+				//上傳圖片
+				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+					ele.sendKeys(productDir+"image1.png");
+					console.log("- 上傳圖片");
+				});
 
 				// 分類
 				driver.wait(until.elementLocated(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass1+'")]'))).then((ele) => {
@@ -666,10 +666,10 @@ function prepareLaunch(rows, index) {
 					ele.click();
 				});
 
-				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
-					ele.sendKeys(productDir+"image1.png");
-					console.log("- 上傳圖片");
-				});
+				// driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+				// 	ele.sendKeys(productDir+"image1.png");
+				// 	console.log("- 上傳圖片");
+				// });
 
 				// 交易與運送方式
 				// 選擇預設值
@@ -748,6 +748,7 @@ function prepareLaunch(rows, index) {
 				driver.get('https://tw.bid.yahoo.com/partner/merchandise/select_type?hpp=hp_auc_navigation_01');
 
 				driver.wait(until.elementLocated(By.css('input[data-rapid_p="3"]'))).then((ele) => {
+					driver.sleep(1000);
 					ele.click();
 				});
 
