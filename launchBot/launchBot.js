@@ -464,12 +464,14 @@ exports.launching = function(product) {
 				// 	.sendKeys(productDir+"image3.png");
 
 				// 商品數量
+				driver.sleep(1000);
 				driver.findElement(By.xpath('//*[@id="totalQuantity"]'))
 					.clear();
 				driver.findElement(By.xpath('//*[@id="totalQuantity"]'))
 					.sendKeys("999");
 
 				// 商品價格
+				driver.sleep(1000);
 				driver.findElement(By.xpath('//*[@id="salePrice"]'))
 					.sendKeys(product.price);
 

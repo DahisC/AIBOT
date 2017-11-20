@@ -54,7 +54,7 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 
 		var productImg = $('div.pic_view img:nth-child(1)').attr('src');
 
-		if (productImg.indexOf('.png') >= 0) {
+		if (productImg !== undefined && productImg.indexOf('.png') >= 0) {
 			productImg = 'http://www.yohohongkong.com' + productImg;
 		} else {
 			productImg = "https://i.imgur.com/qUGd0q6.png";
@@ -186,6 +186,14 @@ function crawler(searchRange, index, searchCallback, displayFunc) {
 		var productClassA = $('div.menus a:nth-of-type(2)').text();
 		var productClassB = $('div.menus a:nth-of-type(3)').text();
 		var productClassC = $('div.menus a:nth-of-type(4)').text();
+
+		if (productClassB == '桌上電腦') {
+			productClassC = '桌上型電腦';
+		} else if (productClassB == '平板電腦') {
+			productClassC = '平板電腦'; 
+		} else if (productClassB == '手提電腦') {
+			productClassC = '筆記型電腦';
+		}
 
 		productClassC = productClassC.replace(/智能手機/g,"智慧型手機");
 		productClassC = productClassC.replace(/行動電源/g,"充電器");

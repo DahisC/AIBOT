@@ -306,7 +306,7 @@ function prepareLaunch(rows, index) {
 				rutenClass1 = "生活、居家";
 				rutenClass2 = "國際代購/代買";
 
-				yahooClass1 = "居家 - 家具與園藝";
+				yahooClass1 = "居家、家具與園藝";
 				yahooClass2 = "其他";
 				//
 			} else {
