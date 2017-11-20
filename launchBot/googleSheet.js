@@ -46,7 +46,7 @@ exports.getSheet = function(callback) {
 
 }
 
-exports.writeIn = function(header, value, product) {
+exports.writeIn = function(header, value, product, callback) {
 
 	async.series([
 
@@ -103,6 +103,9 @@ exports.writeIn = function(header, value, product) {
 					console.log(value+" - 商品 "+product.name+" 上架完成。")
 					cell.setValue(value, null);
 				}
+
+				console.log("----- ----- 平台上架成功，儲存上架紀錄！ ----- -----");
+				callback();
 
 			});
 		}

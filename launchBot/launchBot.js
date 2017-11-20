@@ -403,126 +403,297 @@ exports.launching = function(product) {
 
 	function launchYahoo(product, callback) {
 
-		async.series([
+				console.log("----- ----- 目前上架平台：Yahoo! 拍賣 ----- -----");
 
-			function startLaunch(step) {
+				driver.get('https://tw.bid.yahoo.com/partner/merchandise/select_type?hpp=hp_auc_navigation_01');
 
-				driver.sleep(3000);
-
-				console.log("正在將商品 "+product.name+" 上架到 Yahoo...");
-
-				// 刊登頁面
-				driver.get('https://tw.bid.yahoo.com/partner/merchandise/select_type');
-				driver.findElement(By.css('input[data-rapid_p="3"]'))
-					.click();
-
-				// 選擇分類
-				// 分類第一項 div.category-select-wrap>div:nth-child(1) select option:nth-child(x)
-				// 分類第二項 div.category-select-wrap>div:nth-child(3) select option:nth-child(x)
-				// 分類第三項 div.category-select-wrap>div:nth-child(3) select option:nth-child(x)
-				driver.findElement(By.css('input[value="1"]'))
-				.click();
-				driver.findElement(By.css('div.category-select-wrap>div:nth-child(1) select option:nth-child('+product.yahooA+')'))
-				.click();
-				driver.sleep(1000);
-				driver.findElement(By.css('div.category-select-wrap>div:nth-child(3) select option:nth-child('+product.yahooB+')'))
-				.click();
-				(product.yahooB == 7) ? class3() : driver.sleep(1000);
-				function class3() {
+				driver.wait(until.elementLocated(By.css('input[data-rapid_p="3"]'))).then((ele) => {
 					driver.sleep(1000);
-					driver.findElement(By.css('div.category-select-wrap>div:nth-child(5) select option:nth-child('+product.yahooC+')'))
-						.click()
-				}
-				// 下一步
-				driver.findElement(By.css('input.button-submit'))
-					.click();
-				driver.sleep(3000);
-
-				// 店家分類
-				driver.findElement(By.css('select[name="customCategory"] option[value="60"]'))
-					.click();
-				// 商品名稱
-				driver.findElement(By.css('input[name="itemTitle"]'))
-					.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
-
-				// 上傳圖片 div.upload-image-wrap input[type="file"]
-				driver.findElement(By.css('div.upload-image-wrap input[type="file"]'))
-					.sendKeys(productDir+"image1.png");
-				driver.sleep(3000);
-				driver.findElement(By.css('div.upload-image-wrap input[type="file"]'))
-					.sendKeys(productDir+"image2.png");	
-				driver.sleep(3000);
-				driver.findElement(By.css('div.upload-image-wrap input[type="file"]'))
-					.sendKeys(productDir+"image3.png");	
-				driver.sleep(3000);
-
-				// driver.findElement(By.css('div.specs-image-wrap.hidden input[type="file"]'))
-				// 	.sendKeys(productDir+"image1.png");
-				// driver.findElement(By.css('div.specs-image-wrap.hidden input[type="file"]'))
-				// 	.sendKeys(productDir+"image2.png");
-				// driver.findElement(By.css('div.specs-image-wrap.hidden input[type="file"]'))
-				// 	.sendKeys(productDir+"image3.png");
-
-				// 商品數量
-				driver.sleep(1000);
-				driver.findElement(By.xpath('//*[@id="totalQuantity"]'))
-					.clear();
-				driver.findElement(By.xpath('//*[@id="totalQuantity"]'))
-					.sendKeys("999");
-
-				// 商品價格
-				driver.sleep(1000);
-				driver.findElement(By.xpath('//*[@id="salePrice"]'))
-					.sendKeys(product.price);
-
-				if (product.video !== 0) {
-					product.video = "https://youtu.be/"+product.video;
-					driver.findElement(By.xpath('//*[@id="videoSet"]'))
-						.sendKeys(product.video);
-					driver.findElement(By.xpath('//*[@id="videoSet"]'))
-						.clear();
-					driver.findElement(By.xpath('//*[@id="videoSet"]'))
-						.sendKeys(product.video);
-				}
-
-				// 原始碼
-				driver.findElement(By.xpath('//*[@id="literalMode"]'))
-					.click();
-				// driver.findElement(By.css('textarea[name="itemDesc"]'))
-				// 	.sendKeys(product.rycode);
-
-				var targetElement = driver.findElement(By.css('textarea[name="itemDesc"]'));
-				driver.executeScript("arguments[0].value = arguments[1];", targetElement, product.rycode);
-
-				driver.findElement(By.xpath('//*[@id="htmlMode"]'))
-					.click();
-
-				// 下一頁
-				driver.findElement(By.css('input[value="下一步"]'))
-					.click();
-				driver.sleep(7000);
-				// 完成
-				driver.findElement(By.css('input[value="送出"]'))
-					.click();
-				driver.sleep(3000);
-
-				// 取得商品網址後寫入表單
-				/* 將 callback 與 writeIn 函式放在一個需等待的元素中，可以解決異步問題 */
-				var yahooUrl = driver.findElement(By.css('span.value a'));
-				yahooUrl.getAttribute('href').then(function(href) {
-					googleSheet.writeIn("yahoo", href, product);
-					callback();
+					ele.click();
 				});
 
-				driver.sleep(3000);
-			}
+				// 分類
+				driver.wait(until.elementLocated(By.css('input[value="1"]'))).then((ele) => {
+					ele.click().then(() => {
+						driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(1) select option:nth-child('+product.yahooA+')'))).then((ele) => {
+							driver.sleep(1000);
+							ele.click().then(() => {
+								console.log("- 選擇分類「"+product.yahooA+"」。");
+							//driver.executeScript("arguments[0].click()", ele).then(() => {
+								driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(3) select option:nth-child('+product.yahooB+')'))).then((ele) => {
+									driver.sleep(1000);
+									ele.click().then(() => {
+										console.log("- 選擇分類「"+product.yahooB+"」。");
+									//driver.executeScript("arguments[0].click()", ele).then(() => {
+										if (product.yahooB == 7) {
+											driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(5) select option:nth-child('+product.yahooC+')'))).then((ele) => {
+												driver.sleep(1000);
+												ele.click();
+												console.log("- 選擇分類「"+product.yahooC+"」。");
+												//driver.executeScript("arguments[0].click()", ele);
+											});
+										} else {
 
-		],	function(err, res) {
-			if (err) throw err;
-			//googleSheet.writeIn("yahoo", "yahoodone", product);
-			//console.log(product.name+" 已上架至 Yahoo...");
-		});
-	}
+										}
+									});
+								});
+							});
+						});
+					});
+				});
+
+				// 下一步
+				driver.wait(until.elementLocated(By.css('input.button-submit'))).then((ele) => {
+					ele.click();
+				});
+
+				// 先上傳圖片
+				driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
+					console.log("準備上傳圖片 ...");
+					ele.sendKeys(productDir+"image1.png").then(() => {
+						driver.sleep(1500);
+						driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
+							ele.sendKeys(productDir+"image2.png").then(() => {
+								driver.sleep(1500);
+								driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
+									ele.sendKeys(productDir+"image3.png");
+								});
+							});
+						});
+					});
+					// console.log("- 上傳圖片。");
+				});
+
+				// 店家分類
+				driver.wait(until.elementLocated(By.xpath('//*[@id="product"]/div/div[1]/fieldset/div[1]/div[2]/div/label/select/option[contains(text(), "☆注目商品☆")]'))).then((ele) => {
+					ele.click();
+					console.log("- 選擇店家分類「☆注目商品☆」。");
+				});
+
+				// 商品名稱
+				driver.wait(until.elementLocated(By.css('input[name="itemTitle"]'))).then((ele) => {
+					driver.executeScript("arguments[0].value = arguments[1]", ele, '【T'+product.yohotw+'】'+product.name+'《Ai-Tec》');
+					console.log("- 填入商品名稱。");
+				});
+
+				// 商品數量
+				driver.wait(until.elementLocated(By.xpath('//*[@id="totalQuantity"]'))).then((ele) => {
+					ele.clear();
+					driver.executeScript("arguments[0].value = arguments[1]", ele, 999);
+				});
+
+				// 商品價格
+				driver.wait(until.elementLocated(By.xpath('//*[@id="salePrice"]'))).then((ele) => {
+					driver.executeScript("arguments[0].value = arguments[1]", ele, product.price);
+					console.log("- 填入商品價格。");
+				});
+
+
+				// 原始碼
+				driver.wait(until.elementLocated(By.xpath('//*[@id="literalMode"]'))).then((ele) => {
+					ele.click().then(() => {
+						driver.wait(until.elementLocated(By.css('textarea[name="itemDesc"]'))).then((ele) => {
+							driver.executeScript("arguments[0].value = arguments[1]", ele, product.rycode).then(() => {
+								driver.wait(until.elementLocated(By.xpath('//*[@id="htmlMode"]'))).click();
+								console.log("- 填入原始碼。");
+								console.log("檢查圖片上傳情況 ...");
+								checkImage();
+							});
+						});
+					});
+				});
+
+				
+
+				//https://s.yimg.com/ur/newauctions/img/transparent.gif
+				//li.yui3-u:nth-child(1) .irens img
+				function checkImage() {
+					console.log("檢查圖片上傳進度... ")
+					driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
+						ele.getAttribute('src').then((src) => {
+							if (src.indexOf('transparent.gif') >= 0) {
+								driver.sleep(1000);
+								console.log("等待第 1 張圖片上傳 ...");
+								checkImage();
+							} else {
+								// console.log("- 圖片上傳完成，即將上架商品。");
+								// YahooLaunching();
+								driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
+									ele.getAttribute('src').then((src) => {
+										if (src.indexOf('transparent.gif') >= 0) {
+											driver.sleep(1000);
+											console.log("等待第 2 張圖片上傳 ...");
+											checkImage();
+										} else {
+											driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
+												ele.getAttribute('src').then((src) => {
+													if (src.indexOf('transparent.gif') >= 0) {
+														driver.sleep(1000);
+														console.log("等待第 3 張圖片上傳 ...");
+														checkImage();
+													} else {
+														console.log("- 圖片上傳完成，即將上架商品。");
+														YahooLaunching();
+													}
+												});
+											});
+										}
+									});
+								});
+							}
+						});
+					});
+				}
+
+				function YahooLaunching() {
+				
+				//送出
+					driver.wait(until.elementLocated(By.css('input[value="下一步"]'))).then((ele) => {
+						driver.sleep(1500);
+						ele.click().then(() => {
+							driver.wait(until.elementLocated(By.css('input[value="送出"]'))).then((ele) => {
+								driver.sleep(1000);
+								ele.click().then(() => {
+									driver.wait(until.elementLocated(By.css('span.value a'))).then((ele) => {
+										ele.getAttribute('href').then((url) => {
+											googleSheet.writeIn("yahoo", url, product, function() {
+												driver.sleep(3000);
+												callback();
+											});
+										});
+									});
+								});
+							});
+						});
+					});
+				}
+				
+
+
+				//callback();
+			}
+	// function launchYahoo(product, callback) {
+
+	// 	async.series([
+
+	// 		function startLaunch(step) {
+
+	// 			driver.sleep(3000);
+
+	// 			console.log("正在將商品 "+product.name+" 上架到 Yahoo...");
+
+	// 			// 刊登頁面
+	// 			driver.get('https://tw.bid.yahoo.com/partner/merchandise/select_type');
+	// 			driver.findElement(By.css('input[data-rapid_p="3"]'))
+	// 				.click();
+
+	// 			// 選擇分類
+	// 			// 分類第一項 div.category-select-wrap>div:nth-child(1) select option:nth-child(x)
+	// 			// 分類第二項 div.category-select-wrap>div:nth-child(3) select option:nth-child(x)
+	// 			// 分類第三項 div.category-select-wrap>div:nth-child(3) select option:nth-child(x)
+	// 			driver.findElement(By.css('input[value="1"]'))
+	// 			.click();
+	// 			driver.findElement(By.css('div.category-select-wrap>div:nth-child(1) select option:nth-child('+product.yahooA+')'))
+	// 			.click();
+	// 			driver.sleep(1000);
+	// 			driver.findElement(By.css('div.category-select-wrap>div:nth-child(3) select option:nth-child('+product.yahooB+')'))
+	// 			.click();
+	// 			(product.yahooB == 7) ? class3() : driver.sleep(1000);
+	// 			function class3() {
+	// 				driver.sleep(1000);
+	// 				driver.findElement(By.css('div.category-select-wrap>div:nth-child(5) select option:nth-child('+product.yahooC+')'))
+	// 					.click()
+	// 			}
+	// 			// 下一步
+	// 			driver.findElement(By.css('input.button-submit'))
+	// 				.click();
+	// 			driver.sleep(3000);
+
+	// 			// 店家分類
+	// 			driver.findElement(By.css('select[name="customCategory"] option[value="60"]'))
+	// 				.click();
+	// 			// 商品名稱
+	// 			driver.findElement(By.css('input[name="itemTitle"]'))
+	// 				.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
+
+	// 			// 上傳圖片 div.upload-image-wrap input[type="file"]
+	// 			driver.findElement(By.css('div.upload-image-wrap input[type="file"]'))
+	// 				.sendKeys(productDir+"image1.png");
+	// 			driver.sleep(3000);
+	// 			driver.findElement(By.css('div.upload-image-wrap input[type="file"]'))
+	// 				.sendKeys(productDir+"image2.png");	
+	// 			driver.sleep(3000);
+	// 			driver.findElement(By.css('div.upload-image-wrap input[type="file"]'))
+	// 				.sendKeys(productDir+"image3.png");	
+	// 			driver.sleep(3000);
+
+	// 			// driver.findElement(By.css('div.specs-image-wrap.hidden input[type="file"]'))
+	// 			// 	.sendKeys(productDir+"image1.png");
+	// 			// driver.findElement(By.css('div.specs-image-wrap.hidden input[type="file"]'))
+	// 			// 	.sendKeys(productDir+"image2.png");
+	// 			// driver.findElement(By.css('div.specs-image-wrap.hidden input[type="file"]'))
+	// 			// 	.sendKeys(productDir+"image3.png");
+
+	// 			// 商品數量
+	// 			driver.sleep(1000);
+	// 			driver.findElement(By.xpath('//*[@id="totalQuantity"]'))
+	// 				.clear();
+	// 			driver.findElement(By.xpath('//*[@id="totalQuantity"]'))
+	// 				.sendKeys("999");
+
+	// 			// 商品價格
+	// 			driver.sleep(1000);
+	// 			driver.findElement(By.xpath('//*[@id="salePrice"]'))
+	// 				.sendKeys(product.price);
+
+	// 			if (product.video !== 0) {
+	// 				product.video = "https://youtu.be/"+product.video;
+	// 				driver.findElement(By.xpath('//*[@id="videoSet"]'))
+	// 					.sendKeys(product.video);
+	// 				driver.findElement(By.xpath('//*[@id="videoSet"]'))
+	// 					.clear();
+	// 				driver.findElement(By.xpath('//*[@id="videoSet"]'))
+	// 					.sendKeys(product.video);
+	// 			}
+
+	// 			// 原始碼
+	// 			driver.findElement(By.xpath('//*[@id="literalMode"]'))
+	// 				.click();
+	// 			// driver.findElement(By.css('textarea[name="itemDesc"]'))
+	// 			// 	.sendKeys(product.rycode);
+
+	// 			var targetElement = driver.findElement(By.css('textarea[name="itemDesc"]'));
+	// 			driver.executeScript("arguments[0].value = arguments[1];", targetElement, product.rycode);
+
+	// 			driver.findElement(By.xpath('//*[@id="htmlMode"]'))
+	// 				.click();
+
+	// 			// 下一頁
+	// 			driver.findElement(By.css('input[value="下一步"]'))
+	// 				.click();
+	// 			driver.sleep(7000);
+	// 			// 完成
+	// 			driver.findElement(By.css('input[value="送出"]'))
+	// 				.click();
+	// 			driver.sleep(3000);
+
+	// 			// 取得商品網址後寫入表單
+	// 			/* 將 callback 與 writeIn 函式放在一個需等待的元素中，可以解決異步問題 */
+	// 			var yahooUrl = driver.findElement(By.css('span.value a'));
+	// 			yahooUrl.getAttribute('href').then(function(href) {
+	// 				googleSheet.writeIn("yahoo", href, product);
+	// 				callback();
+	// 			});
+
+	// 			driver.sleep(3000);
+	// 		}
+
+	// 	],	function(err, res) {
+	// 		if (err) throw err;
+	// 		//googleSheet.writeIn("yahoo", "yahoodone", product);
+	// 		//console.log(product.name+" 已上架至 Yahoo...");
+	// 	});
+	// }
 
 	function launchShopee(product, callback) {
 
