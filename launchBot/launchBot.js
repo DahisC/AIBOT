@@ -155,9 +155,12 @@ exports.launching = function(product) {
 					.click();
 				// 擷取商品網址
 				var anyspecsUrl = driver.findElement(By.css('link[hreflang="x-default"]'));
-				anyspecsUrl.getAttribute('href').then(function(href) {
-					googleSheet.writeIn("anyspecs", href, product);
-					callback();
+				anyspecsUrl.getAttribute('href').then(function(url) {
+					googleSheet.writeIn("anyspecs", url, product, function() {
+						driver.sleep(3000);
+						callback();
+					});
+
 				});
 			}
 
@@ -281,9 +284,14 @@ exports.launching = function(product) {
 					yohoNo = yohoNo[1];
 					product.yohotw = yohoNo;
 					/* 在此處莫名其妙解決了 callback 會異步執行的問題，成功帶回產品編號 */
-					googleSheet.writeIn("yohotw", yohoNo, product);
-					callback();
+					// googleSheet.writeIn("yohotw", yohoNo, product);
+					// callback();
 					//step();
+					googleSheet.writeIn("yohotw", yohoNo, product, function() {
+						driver.sleep(3000);
+						callback();
+					});
+
 				});
 			}	
 
@@ -295,283 +303,502 @@ exports.launching = function(product) {
 		});
 	}
 
-	function launchRuten(product, callback) {
+	function launchRuten(callback) {
 
-		async.series([
+		console.log("----- ----- 目前上架平台：露天拍賣 ----- -----");
+		
+		// 上架頁面
+		driver.get('https://mybidu.ruten.com.tw/upload/step1.htm');
 
-			function startLaunch(step) {
-
-				driver.sleep(3000);
-				
-				console.log("正在將商品 "+product.name+" 上架到 Ruten...");
-
-				driver.get('https://mybidu.ruten.com.tw/upload/step1.htm');
-				driver.findElement(By.xpath('/html/body/div/div[3]/div/div/a[1]/span'))
-					.click();
-
-				// 商品分類
-				driver.sleep(1000);
-				driver.findElement(By.css('ul.class-path-node-list li[rt-class-id="'+product.rutenA+'"]'))
-					.click();
-				driver.sleep(2000);
-				driver.findElement(By.css('ul.class-path-node-list li[rt-class-id="'+product.rutenB+'"]'))
-					.click();
-
-				// 插入圖片
-				driver.findElement(By.xpath('//*[@id="image_uploader"]/div/div[1]/div/label[1]/input'))
-					.sendKeys(productDir+"image1.png");
-				driver.findElement(By.xpath('//*[@id="image_uploader"]/div/div[1]/div/label[1]/input'))
-					.sendKeys(productDir+"image2.png");
-				driver.findElement(By.xpath('//*[@id="image_uploader"]/div/div[1]/div/label[1]/input'))
-					.sendKeys(productDir+"image3.png");
-
-				// 商品名稱
-				driver.findElement(By.xpath('//*[@id="g_name"]'))
-					.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
-				// 店家分類
-				driver.findElement(By.css('select[name="user_class_select"] option[value="4090576"]'))
-					.click();
-				// 商品價格
-				driver.findElement(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[3]/td/div[1]/label/input'))
-					.sendKeys(product.price);
-				// 商品數量
-				driver.findElement(By.xpath('//*[@id="show_num"]'))
-					.sendKeys("999");
-				// 自用料號
-				driver.findElement(By.xpath('//*[@id="goods_no"]'))
-					.sendKeys("T"+product.yohotw);
-				// Youtube 影片
-				if (product.video !== 0) {
-					product.video = "https://youtu.be/"+product.video;
-					driver.findElement(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[10]/td/input'))
-						.sendKeys(product.video);
-				}
-				// 原始碼
-				driver.findElement(By.xpath('//*[@id="mce_7"]/button/i'))
-					.click();
-				// driver.findElement(By.className('mce-textbox'))
-				// 	.sendKeys(product.rycode);
-				var targetElement = driver.findElement(By.className('mce-textbox'))
-				driver.executeScript("arguments[0].value = arguments[1];", targetElement, product.rycode);
-
-				driver.findElement(By.xpath('//*[@id="mce_46"]/button'))
-					.click();
-				// 賣家保固
-				driver.findElement(By.xpath('//*[@id="g_flag_3_select"]/option[2]'))
-					.click();
-				driver.findElement(By.xpath('//*[@id="g_flag_3"]'))
-					.click();
-				// 可開發票
-				driver.findElement(By.xpath('//*[@id="g_flag_6"]'))
-					.click();
-				// 海外運送
-				driver.findElement(By.xpath('//*[@id="g_flag_11"]'))
-					.click();
-				// 高雄市
-				driver.findElement(By.xpath('//*[@id="location_tw"]/option[17]'))
-					.click();
-
-				// 運送方式套用預設值
-				driver.findElement(By.xpath('//*[@id="main_form"]/div[5]/table/tbody/tr[1]/td/ul/li/label/input'))
-					.click();
-
-				driver.sleep(10000);
-
-				// 下一步
-				driver.findElement(By.css('input[value="下一步"]'))
-					.click();
-				driver.sleep(3000);
-
-				// 送出
-				driver.findElement(By.css('input[value="確認送出"]'))
-					.click();
-				driver.sleep(3000);
-
-				var rutenUrl = driver.findElement(By.css('div.rt-panel-inner td.text-left:nth-child(2) a'));
-				rutenUrl.getAttribute('href').then(function(href) {
-					googleSheet.writeIn("ruten", href, product);
-					callback();
-				});
-			}
-
-		],	function(err, res) {
-			if (err) throw err;
-			//googleSheet.writeIn("ruten", "rutendone", product);
-			//console.log(product.name+" 已上架至 Ruten...");
+		// 選擇上架方式
+		driver.wait(until.elementLocated(By.css('body > div > div.rt-wrap > div > div > a.rt-upload-tool-item.rt-upload-tool-oneitem > span'))).then((ele) => {
+			ele.click();
 		});
-	}
 
-	function launchYahoo(product, callback) {
+		//上傳圖片
+		// driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+		// 	ele.sendKeys(productDir+"image1.png");
+		// 	console.log("- 上傳圖片");
+		// });
 
-				console.log("----- ----- 目前上架平台：Yahoo! 拍賣 ----- -----");
-
-				driver.get('https://tw.bid.yahoo.com/partner/merchandise/select_type?hpp=hp_auc_navigation_01');
-
-				driver.wait(until.elementLocated(By.css('input[data-rapid_p="3"]'))).then((ele) => {
-					driver.sleep(1000);
-					ele.click();
-				});
-
-				// 分類
-				driver.wait(until.elementLocated(By.css('input[value="1"]'))).then((ele) => {
-					ele.click().then(() => {
-						driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(1) select option:nth-child('+product.yahooA+')'))).then((ele) => {
-							driver.sleep(1000);
-							ele.click().then(() => {
-								console.log("- 選擇分類「"+product.yahooA+"」。");
-							//driver.executeScript("arguments[0].click()", ele).then(() => {
-								driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(3) select option:nth-child('+product.yahooB+')'))).then((ele) => {
-									driver.sleep(1000);
-									ele.click().then(() => {
-										console.log("- 選擇分類「"+product.yahooB+"」。");
-									//driver.executeScript("arguments[0].click()", ele).then(() => {
-										if (product.yahooB == 7) {
-											driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(5) select option:nth-child('+product.yahooC+')'))).then((ele) => {
-												driver.sleep(1000);
-												ele.click();
-												console.log("- 選擇分類「"+product.yahooC+"」。");
-												//driver.executeScript("arguments[0].click()", ele);
-											});
-										} else {
-
-										}
-									});
-								});
-							});
-						});
-					});
-				});
-
-				// 下一步
-				driver.wait(until.elementLocated(By.css('input.button-submit'))).then((ele) => {
-					ele.click();
-				});
-
-				// 先上傳圖片
-				driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
-					console.log("準備上傳圖片 ...");
-					ele.sendKeys(productDir+"image1.png").then(() => {
+		driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+			console.log("準備上傳圖片 ...");
+			ele.sendKeys(productDir+"image1.png").then(() => {
+				driver.sleep(1500);
+				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+					ele.sendKeys(productDir+"image2.png").then(() => {
 						driver.sleep(1500);
-						driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
-							ele.sendKeys(productDir+"image2.png").then(() => {
-								driver.sleep(1500);
-								driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
-									ele.sendKeys(productDir+"image3.png");
-								});
-							});
+						driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+							ele.sendKeys(productDir+"image3.png");
 						});
 					});
-					// console.log("- 上傳圖片。");
 				});
+			});
+			// console.log("- 上傳圖片。");
+		});
 
-				// 店家分類
-				driver.wait(until.elementLocated(By.xpath('//*[@id="product"]/div/div[1]/fieldset/div[1]/div[2]/div/label/select/option[contains(text(), "☆注目商品☆")]'))).then((ele) => {
-					ele.click();
-					console.log("- 選擇店家分類「☆注目商品☆」。");
+		// 分類
+		driver.wait(until.elementLocated(By.css('ul.class-path-node-list li[rt-class-id="'+product.rutenA+'"]'))).then((ele) => {
+			driver.sleep(1000);
+			//ele.click().then(() => {
+			driver.executeScript("arguments[0].click()", ele).then(() => {
+				console.log("- 選擇分類「"+rutenClass1+"」。");
+				driver.wait(until.elementLocated(By.css('ul.class-path-node-list li[rt-class-id="'+product.rutenB+'"]'))).then((ele) => {
+					driver.sleep(1000);
+					//ele.click().then(() => {
+					driver.executeScript("arguments[0].click()", ele).then(() => {
+						console.log("- 選擇分類「"+rutenClass2+"」。");
+						// if (rutenClass3 != 'None') {
+						// 	driver.wait(until.elementLocated(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass3+'")]'))).then((ele) => {
+						// 		driver.sleep(1000);
+						// 		driver.executeScript("arguments[0].click()", ele);
+						// 		console.log("- 選擇分類「"+rutenClass3+"」。");
+						// 	});
+						// }
+					});
 				});
+			});
+		});
 
-				// 商品名稱
-				driver.wait(until.elementLocated(By.css('input[name="itemTitle"]'))).then((ele) => {
-					driver.executeScript("arguments[0].value = arguments[1]", ele, '【T'+product.yohotw+'】'+product.name+'《Ai-Tec》');
-					console.log("- 填入商品名稱。");
-				});
+		//driver.sleep(10000);
 
+		// 商品名稱
+		driver.wait(until.elementLocated(By.css('#g_name'))).then((ele) => {
+			driver.executeScript("arguments[0].value = arguments[1]", ele, "【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
+			console.log("- 填入商品名稱"+product.name+"。");
+		});
+
+		// 店家分類
+		driver.wait(until.elementLocated(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[2]/td/select/option[contains(text(), "☆注目商品☆")]'))).then((ele) => {
+			ele.click();
+			console.log("- 選擇店家分類「☆注目商品☆」。");
+		});
+
+		// 商品價格
+		driver.wait(until.elementLocated(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[3]/td/div[1]/label/input'))).then((ele) => {
+			driver.executeScript("arguments[0].value = arguments[1]", ele, product.price).then(() => {
+				console.log("- 填入商品價格「"+product.price+"」。");
 				// 商品數量
-				driver.wait(until.elementLocated(By.xpath('//*[@id="totalQuantity"]'))).then((ele) => {
-					ele.clear();
+				driver.wait(until.elementLocated(By.xpath('//*[@id="show_num"]'))).then((ele) => {
 					driver.executeScript("arguments[0].value = arguments[1]", ele, 999);
 				});
+			});
+		});
 
-				// 商品價格
-				driver.wait(until.elementLocated(By.xpath('//*[@id="salePrice"]'))).then((ele) => {
-					driver.executeScript("arguments[0].value = arguments[1]", ele, product.price);
-					console.log("- 填入商品價格。");
+		// Youtube 影片
+	// 	if (product.video !== 0) {
+	// // 				product.video = "https://youtu.be/"+product.video;
+	// // 				driver.findElement(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[10]/td/input'))
+	// // 					.sendKeys(product.video);
+	// // 			}
+		if (product.video !== 0) {
+			driver.wait(until.elementLocated(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[10]/td/input'))).then((ele) => {
+				ele.clear().then(() => {
+					driver.executeScript("arguments[0].value = arguments[1]", ele, "https://youtu.be/"+product.video);
 				});
+			});
+		}
 
+		// 原始碼
+		driver.wait(until.elementLocated(By.css('#mce_7 > button > i'))).then((ele) => {
+			driver.sleep(1000);
+			ele.click().then(() => {
+				driver.wait(until.elementLocated(By.className('mce-textbox'))).then((ele) => {
+					driver.executeScript("arguments[0].value = arguments[1]", ele, product.rycode).then(() => {
+						driver.wait(until.elementLocated(By.xpath('//*[@id="mce_46"]/button'))).then((ele) => {
+							ele.click();
+							console.log("- 填入原始碼。");
+						});
+					});
+				});
+			});
+		}, (err) => {
+		});
 
-				// 原始碼
-				driver.wait(until.elementLocated(By.xpath('//*[@id="literalMode"]'))).then((ele) => {
-					ele.click().then(() => {
-						driver.wait(until.elementLocated(By.css('textarea[name="itemDesc"]'))).then((ele) => {
-							driver.executeScript("arguments[0].value = arguments[1]", ele, product.rycode).then(() => {
-								driver.wait(until.elementLocated(By.xpath('//*[@id="htmlMode"]'))).click();
-								console.log("- 填入原始碼。");
-								console.log("檢查圖片上傳情況 ...");
-								checkImage();
+		// 特別醒目標籤
+		driver.wait(until.elementLocated(By.css('#g_flag_6'))).then((ele) => {
+			ele.click().then(() => {
+				driver.wait(until.elementLocated(By.css('#g_flag_11'))).then((ele) => {
+					ele.click();
+				});
+			});
+		});
+
+		// 物品所在地
+		driver.wait(until.elementLocated(By.xpath('//*[@id="location_tw"]/option[contains(text(), "高雄市")]'))).then((ele) => {
+			ele.click();
+		});
+
+		// driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+		// 	ele.sendKeys(productDir+"image1.png");
+		// 	console.log("- 上傳圖片");
+		// });
+
+		// 交易與運送方式
+		// 選擇預設值
+		driver.wait(until.elementLocated(By.css('#main_form > div.upload-step.step4 > table > tbody > tr:nth-child(1) > td > ul > li > label > input'))).then((ele) => {
+			ele.click();
+			checkImage();
+		});
+
+		// 
+		
+		// function checkImage() {
+		// 	console.log("頁面完成，等待圖片上傳完畢 ...");
+		// 	driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
+		// 		ele.getAttribute('style').then((style) => { 
+		// 			if (style.indexOf('showpic?tofile=') >= 0) {
+		// 				console.log("- 圖片上傳完成，即將上架商品。");
+		// 				driver.sleep(1000);
+		// 				RutenLaunching();
+		// 			} else {
+		// 				driver.sleep(1000);
+		// 				checkImage();
+		// 			}
+		// 		});
+		// 	});
+		// }
+
+		function checkImage() {
+			console.log("檢查圖片上傳進度... ")
+			driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
+				ele.getAttribute('src').then((src) => {
+					if (style.indexOf('showpic?tofile=') < 0) {
+						driver.sleep(1000);
+						console.log("等待第 1 張圖片上傳 ...");
+						checkImage();
+					} else {
+						// console.log("- 圖片上傳完成，即將上架商品。");
+						// YahooLaunching();
+						driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
+							ele.getAttribute('src').then((src) => {
+								if (style.indexOf('showpic?tofile=') < 0) {
+									driver.sleep(1000);
+									console.log("等待第 2 張圖片上傳 ...");
+									checkImage();
+								} else {
+									driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
+										ele.getAttribute('src').then((src) => {
+											if (style.indexOf('showpic?tofile=') < 0) {
+												driver.sleep(1000);
+												console.log("等待第 3 張圖片上傳 ...");
+												checkImage();
+											} else {
+												console.log("- 圖片上傳完成，即將上架商品。");
+												RutenLaunching();
+											}
+										});
+									});
+								}
 							});
 						});
-					});
+					}
 				});
+			});
+		}
 
-				
 
-				//https://s.yimg.com/ur/newauctions/img/transparent.gif
-				//li.yui3-u:nth-child(1) .irens img
-				function checkImage() {
-					console.log("檢查圖片上傳進度... ")
-					driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
-						ele.getAttribute('src').then((src) => {
-							if (src.indexOf('transparent.gif') >= 0) {
-								driver.sleep(1000);
-								console.log("等待第 1 張圖片上傳 ...");
-								checkImage();
-							} else {
-								// console.log("- 圖片上傳完成，即將上架商品。");
-								// YahooLaunching();
-								driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
-									ele.getAttribute('src').then((src) => {
-										if (src.indexOf('transparent.gif') >= 0) {
-											driver.sleep(1000);
-											console.log("等待第 2 張圖片上傳 ...");
-											checkImage();
-										} else {
-											driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
-												ele.getAttribute('src').then((src) => {
-													if (src.indexOf('transparent.gif') >= 0) {
-														driver.sleep(1000);
-														console.log("等待第 3 張圖片上傳 ...");
-														checkImage();
-													} else {
-														console.log("- 圖片上傳完成，即將上架商品。");
-														YahooLaunching();
-													}
-												});
-											});
-										}
-									});
-								});
-							}
-						});
-					});
-				}
-
-				function YahooLaunching() {
-				
-				//送出
-					driver.wait(until.elementLocated(By.css('input[value="下一步"]'))).then((ele) => {
-						driver.sleep(1500);
+		function RutenLaunching() {
+			driver.wait(until.elementLocated(By.css('#main_form > div.text-center.form-submit-button-wrap > input.rt-button.rt-button-submit.item-upload-submit'))).then((ele) => {
+				ele.click().then(() => {
+					driver.wait(until.elementLocated(By.css('input[value="確認送出"]'))).then((ele) => {
 						ele.click().then(() => {
-							driver.wait(until.elementLocated(By.css('input[value="送出"]'))).then((ele) => {
-								driver.sleep(1000);
-								ele.click().then(() => {
-									driver.wait(until.elementLocated(By.css('span.value a'))).then((ele) => {
-										ele.getAttribute('href').then((url) => {
-											googleSheet.writeIn("yahoo", url, product, function() {
-												driver.sleep(3000);
-												callback();
-											});
+							driver.wait(until.elementLocated(By.css('body > div > div.rt-wrap > div.rt-text-large.item-upload-result > span'))).then((ele) => {
+								driver.wait(until.elementLocated(By.css('body > div > div.rt-wrap > div.rt-panel.rt-panel-bg.item-finish > div > table > tbody > tr:nth-child(2) > td.text-left > a'))).then((ele) => {
+									ele.getAttribute('href').then((url) => {
+										googleSheet.writeIn("ruten", url, product, function() {
+											driver.sleep(3000);
+											callback();
 										});
 									});
 								});
 							});
 						});
 					});
-				}
+				});
+			});
+		}
+	}
+
+	// function launchRuten(product, callback) {
+
+	// 	async.series([
+
+	// 		function startLaunch(step) {
+
+	// 			driver.sleep(3000);
 				
+	// 			console.log("正在將商品 "+product.name+" 上架到 Ruten...");
 
+	// 			driver.get('https://mybidu.ruten.com.tw/upload/step1.htm');
+	// 			driver.findElement(By.xpath('/html/body/div/div[3]/div/div/a[1]/span'))
+	// 				.click();
 
-				//callback();
-			}
+	// 			// 商品分類
+	// 			driver.sleep(1000);
+	// 			driver.findElement(By.css('ul.class-path-node-list li[rt-class-id="'+product.rutenA+'"]'))
+	// 				.click();
+	// 			driver.sleep(2000);
+	// 			driver.findElement(By.css('ul.class-path-node-list li[rt-class-id="'+product.rutenB+'"]'))
+	// 				.click();
+
+	// 			// 插入圖片
+	// 			driver.findElement(By.xpath('//*[@id="image_uploader"]/div/div[1]/div/label[1]/input'))
+	// 				.sendKeys(productDir+"image1.png");
+	// 			driver.findElement(By.xpath('//*[@id="image_uploader"]/div/div[1]/div/label[1]/input'))
+	// 				.sendKeys(productDir+"image2.png");
+	// 			driver.findElement(By.xpath('//*[@id="image_uploader"]/div/div[1]/div/label[1]/input'))
+	// 				.sendKeys(productDir+"image3.png");
+
+	// 			// 商品名稱
+	// 			driver.findElement(By.xpath('//*[@id="g_name"]'))
+	// 				.sendKeys("【T"+product.yohotw+"】"+product.name+"《Ai-Tec》");
+	// 			// 店家分類
+	// 			driver.findElement(By.css('select[name="user_class_select"] option[value="4090576"]'))
+	// 				.click();
+	// 			// 商品價格
+	// 			driver.findElement(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[3]/td/div[1]/label/input'))
+	// 				.sendKeys(product.price);
+	// 			// 商品數量
+	// 			driver.findElement(By.xpath('//*[@id="show_num"]'))
+	// 				.sendKeys("999");
+	// 			// 自用料號
+	// 			driver.findElement(By.xpath('//*[@id="goods_no"]'))
+	// 				.sendKeys("T"+product.yohotw);
+	// 			// Youtube 影片
+	// 			if (product.video !== 0) {
+	// 				product.video = "https://youtu.be/"+product.video;
+	// 				driver.findElement(By.xpath('//*[@id="main_form"]/div[4]/table/tbody/tr[10]/td/input'))
+	// 					.sendKeys(product.video);
+	// 			}
+	// 			// 原始碼
+	// 			driver.findElement(By.xpath('//*[@id="mce_7"]/button/i'))
+	// 				.click();
+	// 			// driver.findElement(By.className('mce-textbox'))
+	// 			// 	.sendKeys(product.rycode);
+	// 			var targetElement = driver.findElement(By.className('mce-textbox'))
+	// 			driver.executeScript("arguments[0].value = arguments[1];", targetElement, product.rycode);
+
+	// 			driver.findElement(By.xpath('//*[@id="mce_46"]/button'))
+	// 				.click();
+	// 			// 賣家保固
+	// 			driver.findElement(By.xpath('//*[@id="g_flag_3_select"]/option[2]'))
+	// 				.click();
+	// 			driver.findElement(By.xpath('//*[@id="g_flag_3"]'))
+	// 				.click();
+	// 			// 可開發票
+	// 			driver.findElement(By.xpath('//*[@id="g_flag_6"]'))
+	// 				.click();
+	// 			// 海外運送
+	// 			driver.findElement(By.xpath('//*[@id="g_flag_11"]'))
+	// 				.click();
+	// 			// 高雄市
+	// 			driver.findElement(By.xpath('//*[@id="location_tw"]/option[17]'))
+	// 				.click();
+
+	// 			// 運送方式套用預設值
+	// 			driver.findElement(By.xpath('//*[@id="main_form"]/div[5]/table/tbody/tr[1]/td/ul/li/label/input'))
+	// 				.click();
+
+	// 			driver.sleep(10000);
+
+	// 			// 下一步
+	// 			driver.findElement(By.css('input[value="下一步"]'))
+	// 				.click();
+	// 			driver.sleep(3000);
+
+	// 			// 送出
+	// 			driver.findElement(By.css('input[value="確認送出"]'))
+	// 				.click();
+	// 			driver.sleep(3000);
+
+	// 			var rutenUrl = driver.findElement(By.css('div.rt-panel-inner td.text-left:nth-child(2) a'));
+	// 			rutenUrl.getAttribute('href').then(function(href) {
+	// 				googleSheet.writeIn("ruten", href, product);
+	// 				callback();
+	// 			});
+	// 		}
+
+	// 	],	function(err, res) {
+	// 		if (err) throw err;
+	// 		//googleSheet.writeIn("ruten", "rutendone", product);
+	// 		//console.log(product.name+" 已上架至 Ruten...");
+	// 	});
+	// }
+
+	function launchYahoo(product, callback) {
+
+		console.log("----- ----- 目前上架平台：Yahoo! 拍賣 ----- -----");
+
+		driver.get('https://tw.bid.yahoo.com/partner/merchandise/select_type?hpp=hp_auc_navigation_01');
+
+		driver.wait(until.elementLocated(By.css('input[data-rapid_p="3"]'))).then((ele) => {
+			driver.sleep(1000);
+			ele.click();
+		});
+
+		// 分類
+		driver.wait(until.elementLocated(By.css('input[value="1"]'))).then((ele) => {
+			ele.click().then(() => {
+				driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(1) select option:nth-child('+product.yahooA+')'))).then((ele) => {
+					driver.sleep(1000);
+					ele.click().then(() => {
+						console.log("- 選擇分類「"+product.yahooA+"」。");
+					//driver.executeScript("arguments[0].click()", ele).then(() => {
+						driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(3) select option:nth-child('+product.yahooB+')'))).then((ele) => {
+							driver.sleep(1000);
+							ele.click().then(() => {
+								console.log("- 選擇分類「"+product.yahooB+"」。");
+							//driver.executeScript("arguments[0].click()", ele).then(() => {
+								if (product.yahooB == 7) {
+									driver.wait(until.elementLocated(By.css('div.category-select-wrap>div:nth-child(5) select option:nth-child('+product.yahooC+')'))).then((ele) => {
+										driver.sleep(1000);
+										ele.click();
+										console.log("- 選擇分類「"+product.yahooC+"」。");
+										//driver.executeScript("arguments[0].click()", ele);
+									});
+								}
+							});
+						});
+					});
+				});
+			});
+		});
+
+		// 下一步
+		driver.wait(until.elementLocated(By.css('input.button-submit'))).then((ele) => {
+			ele.click();
+		});
+
+		// 先上傳圖片
+		driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
+			console.log("準備上傳圖片 ...");
+			ele.sendKeys(productDir+"image1.png").then(() => {
+				driver.sleep(1500);
+				driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
+					ele.sendKeys(productDir+"image2.png").then(() => {
+						driver.sleep(1500);
+						driver.wait(until.elementLocated(By.css('div.upload-image-wrap input[type="file"]'))).then((ele) => {
+							ele.sendKeys(productDir+"image3.png");
+						});
+					});
+				});
+			});
+			// console.log("- 上傳圖片。");
+		});
+
+		// 店家分類
+		driver.wait(until.elementLocated(By.xpath('//*[@id="product"]/div/div[1]/fieldset/div[1]/div[2]/div/label/select/option[contains(text(), "☆注目商品☆")]'))).then((ele) => {
+			ele.click();
+			console.log("- 選擇店家分類「☆注目商品☆」。");
+		});
+
+		// 商品名稱
+		driver.wait(until.elementLocated(By.css('input[name="itemTitle"]'))).then((ele) => {
+			driver.executeScript("arguments[0].value = arguments[1]", ele, '【T'+product.yohotw+'】'+product.name+'《Ai-Tec》');
+			console.log("- 填入商品名稱。");
+		});
+
+		// 商品數量
+		driver.wait(until.elementLocated(By.xpath('//*[@id="totalQuantity"]'))).then((ele) => {
+			ele.clear();
+			driver.executeScript("arguments[0].value = arguments[1]", ele, 999);
+		});
+
+		// 商品價格
+		driver.wait(until.elementLocated(By.xpath('//*[@id="salePrice"]'))).then((ele) => {
+			driver.executeScript("arguments[0].value = arguments[1]", ele, product.price);
+			console.log("- 填入商品價格。");
+		});
+
+		// Youtube 影片
+		if (product.video !== 0) {
+			driver.wait(until.elementLocated(By.xpath('//*[@id="videoSet"]'))).then((ele) => {
+				ele.clear().then(() => {
+					driver.executeScript("arguments[0].value = arguments[1]", ele, "https://youtu.be/"+product.video);
+				});
+			});
+		}
+
+		// 原始碼
+		driver.wait(until.elementLocated(By.xpath('//*[@id="literalMode"]'))).then((ele) => {
+			ele.click().then(() => {
+				driver.wait(until.elementLocated(By.css('textarea[name="itemDesc"]'))).then((ele) => {
+					driver.executeScript("arguments[0].value = arguments[1]", ele, product.rycode).then(() => {
+						driver.wait(until.elementLocated(By.xpath('//*[@id="htmlMode"]'))).click();
+						console.log("- 填入原始碼。");
+						console.log("檢查圖片上傳情況 ...");
+						checkImage();
+					});
+				});
+			});
+		});
+
+		
+
+		//https://s.yimg.com/ur/newauctions/img/transparent.gif
+		//li.yui3-u:nth-child(1) .irens img
+		function checkImage() {
+			console.log("檢查圖片上傳進度... ")
+			driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
+				ele.getAttribute('src').then((src) => {
+					if (src.indexOf('transparent.gif') >= 0) {
+						driver.sleep(1000);
+						console.log("等待第 1 張圖片上傳 ...");
+						checkImage();
+					} else {
+						// console.log("- 圖片上傳完成，即將上架商品。");
+						// YahooLaunching();
+						driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
+							ele.getAttribute('src').then((src) => {
+								if (src.indexOf('transparent.gif') >= 0) {
+									driver.sleep(1000);
+									console.log("等待第 2 張圖片上傳 ...");
+									checkImage();
+								} else {
+									driver.wait(until.elementLocated(By.css('li.yui3-u:nth-child(1) .irens img'))).then((ele) => {
+										ele.getAttribute('src').then((src) => {
+											if (src.indexOf('transparent.gif') >= 0) {
+												driver.sleep(1000);
+												console.log("等待第 3 張圖片上傳 ...");
+												checkImage();
+											} else {
+												console.log("- 圖片上傳完成，即將上架商品。");
+												YahooLaunching();
+											}
+										});
+									});
+								}
+							});
+						});
+					}
+				});
+			});
+		}
+
+		function YahooLaunching() {
+		
+		//送出
+			driver.wait(until.elementLocated(By.css('input[value="下一步"]'))).then((ele) => {
+				driver.sleep(1500);
+				ele.click().then(() => {
+					driver.wait(until.elementLocated(By.css('input[value="送出"]'))).then((ele) => {
+						driver.sleep(1000);
+						ele.click().then(() => {
+							driver.wait(until.elementLocated(By.css('span.value a'))).then((ele) => {
+								ele.getAttribute('href').then((url) => {
+									googleSheet.writeIn("yahoo", url, product, function() {
+										driver.sleep(3000);
+										callback();
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		}
+	}
 	// function launchYahoo(product, callback) {
 
 	// 	async.series([
@@ -774,8 +1001,13 @@ exports.launching = function(product) {
 				// 	.click();
 
 				driver.wait(until.titleIs('蝦皮賣家中心')).then(function() {
-					googleSheet.writeIn("shopee", "已上架", product);
-					callback();
+					// googleSheet.writeIn("shopee", "已上架", product);
+					// callback();
+					googleSheet.writeIn("shopee", 已上架, product, function() {
+						driver.sleep(3000);
+						callback();
+					});
+
 				});
 
 				// // 連結回商品頁面
@@ -977,8 +1209,13 @@ exports.launching = function(product) {
 
 				var mallbicUrl = driver.findElement(By.css('tbody tr.bc_even:nth-child(2)'));
 				mallbicUrl.getAttribute('class').then(function() {
-					googleSheet.writeIn("storage", "1", product);
-					callback();
+					// googleSheet.writeIn("storage", "1", product);
+					// callback();
+					googleSheet.writeIn("storage", "1", product, function() {
+						driver.sleep(3000);
+						callback();
+					});
+
 				});
 
 			}
