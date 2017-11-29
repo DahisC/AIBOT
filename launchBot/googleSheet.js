@@ -46,7 +46,7 @@ exports.getSheet = function(callback) {
 
 }
 
-exports.writeIn = function(header, value, product, callback) {
+exports.writeIn = function(header, value, product, cb) {
 
 	async.series([
 
@@ -105,7 +105,7 @@ exports.writeIn = function(header, value, product, callback) {
 				}
 
 				console.log("----- ----- 平台上架成功，儲存上架紀錄！ ----- -----");
-				callback();
+				cb();
 
 			});
 		}

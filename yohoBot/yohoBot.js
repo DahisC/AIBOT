@@ -877,8 +877,26 @@ function prepareLaunch(rows, index) {
 			}
 
 			function launchShopee(callback) {
-				callback();
-			}
+
+				console.log("----- ----- 目前上架平台：蝦皮 拍賣 ----- -----");
+
+				driver.get('https://seller.shopee.tw/portal/product/list/all');
+
+				driver.wait(until.elementLocated(By.css('.button'))).then((ele) => {
+					ele.click();
+				});
+
+				// 上傳圖片
+				driver.wait(until.elementLocated(By.css('input[type="file"]'))).then((ele) => {
+					ele.sendKeys(productDir+"image1.png");
+				});
+
+				// 商品名稱
+				driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[1]/div[1]/div[2]/div[1]/div[2]/input'))).then((ele) => {
+					driver.executeScript("arguments[0].value = arguments[1]", ele, '【'+rows[i].num+'】'+rows[i].name+'【Ai-Tec】');
+				});
+
+			} // func launchShopee
 
 		} // func launchProduct
 	} // func startLaunch

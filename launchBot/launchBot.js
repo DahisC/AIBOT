@@ -76,6 +76,8 @@ exports.launching = function(product) {
 		.setChromeOptions(options)
 		.build();
 
+	driver.sleep(3000); // 等待圖片寫入
+
 	//driver.manage().window().maximize();
 
 	checkAnyspecs();
@@ -114,7 +116,9 @@ exports.launching = function(product) {
 			googleTarget.getAttribute('value').then(function(value) {
 	
 			var timeStamp = getTime();
-			googleSheet.writeIn("launched", timeStamp, product);
+			googleSheet.writeIn("launched", timeStamp, product, function() {
+				console.log("商品已上架到各平台。");
+			});
 		});
 	}
 
@@ -303,7 +307,7 @@ exports.launching = function(product) {
 		});
 	}
 
-	function launchRuten(callback) {
+	function launchRuten(product, callback) {
 
 		console.log("----- ----- 目前上架平台：露天拍賣 ----- -----");
 		
@@ -321,15 +325,19 @@ exports.launching = function(product) {
 		// 	console.log("- 上傳圖片");
 		// });
 
-		driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+		driver.wait(until.elementLocated(By.css('input[type="file"].add-local-input'))).then((ele) => {
 			console.log("準備上傳圖片 ...");
 			ele.sendKeys(productDir+"image1.png").then(() => {
+				console.log("- 上傳第 1 張圖片。");
 				driver.sleep(1500);
-				driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
+				driver.wait(until.elementLocated(By.css('input[type="file"].add-local-input'))).then((ele) => {
 					ele.sendKeys(productDir+"image2.png").then(() => {
+						console.log("- 上傳第 2 張圖片。");
 						driver.sleep(1500);
-						driver.wait(until.elementLocated(By.css('#image_uploader > div > div.tool-bar.hint > div > label.action > input'))).then((ele) => {
-							ele.sendKeys(productDir+"image3.png");
+						driver.wait(until.elementLocated(By.css('input[type="file"].add-local-input'))).then((ele) => {
+							ele.sendKeys(productDir+"image3.png").then(() => {
+								console.log("- 上傳第 3 張圖片。");
+							});
 						});
 					});
 				});
@@ -342,12 +350,12 @@ exports.launching = function(product) {
 			driver.sleep(1000);
 			//ele.click().then(() => {
 			driver.executeScript("arguments[0].click()", ele).then(() => {
-				console.log("- 選擇分類「"+rutenClass1+"」。");
+				console.log("- 選擇分類「"+product.rutenA+"」。");
 				driver.wait(until.elementLocated(By.css('ul.class-path-node-list li[rt-class-id="'+product.rutenB+'"]'))).then((ele) => {
 					driver.sleep(1000);
 					//ele.click().then(() => {
 					driver.executeScript("arguments[0].click()", ele).then(() => {
-						console.log("- 選擇分類「"+rutenClass2+"」。");
+						console.log("- 選擇分類「"+product.rutenA	+"」。");
 						// if (rutenClass3 != 'None') {
 						// 	driver.wait(until.elementLocated(By.xpath('//*[@id="goods_class_select"]/ul/li[contains(text(), "'+rutenClass3+'")]'))).then((ele) => {
 						// 		driver.sleep(1000);
@@ -462,7 +470,7 @@ exports.launching = function(product) {
 		function checkImage() {
 			console.log("檢查圖片上傳進度... ")
 			driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
-				ele.getAttribute('src').then((src) => {
+				ele.getAttribute('style').then((style) => {
 					if (style.indexOf('showpic?tofile=') < 0) {
 						driver.sleep(1000);
 						console.log("等待第 1 張圖片上傳 ...");
@@ -470,15 +478,15 @@ exports.launching = function(product) {
 					} else {
 						// console.log("- 圖片上傳完成，即將上架商品。");
 						// YahooLaunching();
-						driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
-							ele.getAttribute('src').then((src) => {
+						driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(2) div.img'))).then((ele) => {
+							ele.getAttribute('style').then((style) => {
 								if (style.indexOf('showpic?tofile=') < 0) {
 									driver.sleep(1000);
 									console.log("等待第 2 張圖片上傳 ...");
 									checkImage();
 								} else {
-									driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(1) div.img'))).then((ele) => {
-										ele.getAttribute('src').then((src) => {
+									driver.wait(until.elementLocated(By.css('div.thumbnail:nth-child(3) div.img'))).then((ele) => {
+										ele.getAttribute('style').then((style) => {
 											if (style.indexOf('showpic?tofile=') < 0) {
 												driver.sleep(1000);
 												console.log("等待第 3 張圖片上傳 ...");
@@ -1003,7 +1011,7 @@ exports.launching = function(product) {
 				driver.wait(until.titleIs('蝦皮賣家中心')).then(function() {
 					// googleSheet.writeIn("shopee", "已上架", product);
 					// callback();
-					googleSheet.writeIn("shopee", 已上架, product, function() {
+					googleSheet.writeIn("shopee", '已上架', product, function() {
 						driver.sleep(3000);
 						callback();
 					});
@@ -1134,8 +1142,10 @@ exports.launching = function(product) {
 
 				var pchomeUrl = driver.findElement(By.css('tbody tr:nth-child(2) a'));
 				pchomeUrl.getAttribute('href').then(function(href) {
-					googleSheet.writeIn("pchome", href, product);
-					callback();
+					googleSheet.writeIn("pchome", href, product, function() {
+						driver.sleep(3000);
+						callback();
+					});
 				});
 
 			}
@@ -1215,7 +1225,6 @@ exports.launching = function(product) {
 						driver.sleep(3000);
 						callback();
 					});
-
 				});
 
 			}
