@@ -29,7 +29,7 @@ function getSheet() {
 	var GoogleSpreadsheet = require('google-spreadsheet');
 	var async = require('async');
 
-	var doc = new GoogleSpreadsheet('1AVBztxQ3H4HFTulAoJ-gr17KDoNtNB1ajK5TrMxJFxI');
+	var doc = new GoogleSpreadsheet('1IsZ88zJWotdNgJoqoe7OzsbDRWGNwPV-83lWtPWE7fw');
 	var sheet;
 
 	async.series([
@@ -67,7 +67,7 @@ function writeInSheet(i, url, callback) {
 	var GoogleSpreadsheet = require('google-spreadsheet');
 	var async = require('async');
 
-	var doc = new GoogleSpreadsheet('1AVBztxQ3H4HFTulAoJ-gr17KDoNtNB1ajK5TrMxJFxI');
+	var doc = new GoogleSpreadsheet('1IsZ88zJWotdNgJoqoe7OzsbDRWGNwPV-83lWtPWE7fw');
 	var sheet;
 
 	async.series([
@@ -192,7 +192,29 @@ function prepareLaunch(rows, index) {
 			var target;
 
 			console.log("上架中，啟動瀏覽器。");
-			driver.get('http://tv.dailygo.tw/admin/goods.php?act=add');
+			driver.get('http://dailygobox.com/Admin/default.html');
+			driver.wait(until.elementLocated(By.css('.navbar-brand-text'))).then(() => {
+				driver.switchTo().frame('mainPage').then(() => {
+					console.log("Switched to Main frame");
+					driver.wait(until.elementLocated(By.css('i.icon.fa-plus-square'))).then((ele) => {
+						ele.click();
+					});
+				});
+			});
+		
+			// 分類
+			driver.wait(until.elementLocated(By.xpath('//*[@id="mainhtml"]/div/div[1]/div[2]/div/div[2]/ol/div/ul/li[contains(text(),"'+rows[i].class+'")]'))).then((ele) => {
+				ele.click().then(() => {
+					driver.wait(until.elementLocated(By.css('#btnNext'))).then((ele) => {
+						ele.click();
+					});
+				});
+			});
+
+			driver.wait(until.elementLocated(By.css('#ctl00_contentHolder_txtProductName'))).then((ele) => {
+				driver.executeScript("arguments[0].value = arguments[1]", ele, rows[i].name);
+			});
+
 
 			// 姓名
 			console.log("等待頁面載入 ...");

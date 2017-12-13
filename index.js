@@ -93,6 +93,11 @@ io.on('connection', function(socket) {
 		DailyGo.launch();
 	});
 
+	socket.on('xappLaunch', () => {
+		var xapp = require('./XAPP/xapp.js');
+		xapp.launch();
+	});
+
 });
 
 // 
