@@ -101,7 +101,7 @@ function writeInSheet(i, url, callback) {
 				var formula = '=HYPERLINK("'+url+'","商品頁面")';
 
 				console.log("將網址 "+url+" 寫入儲存格中...");
-				cell.setValue("D", null);
+				cell.setValue(formula, null);
 				callback();
 
 			});
@@ -192,18 +192,23 @@ function prepareLaunch(rows, index) {
 			var target;
 
 			console.log("上架中，啟動瀏覽器。");
-			driver.get('http://dailygobox.com/Admin/default.html');
-			driver.wait(until.elementLocated(By.css('.navbar-brand-text'))).then(() => {
-				driver.switchTo().frame('mainPage').then(() => {
-					console.log("Switched to Main frame");
-					driver.wait(until.elementLocated(By.css('i.icon.fa-plus-square'))).then((ele) => {
-						ele.click();
+			driver.get('http://dailygobox.com/supplier/default.html');
+			driver.wait(until.elementLocated(By.css('div.xapp_logo'))).then(() => {
+				driver.wait(until.elementLocated(By.css('body > div.xapp_head > div > div.xapp_menu > a:nth-child(1)'))).then((ele) => {
+					ele.click().then(() => {
+						driver.wait(until.elementLocated(By.css('#menu_left > div > div > a:nth-child(1)'))).then((ele) => {
+							driver.executeScript("arguments[0].click()", ele).then(() => {
+								driver.switchTo().frame('frammain').then(() => {
+									console.log("Switched to Main frame");
+								});
+							});;
+						});
 					});
 				});
 			});
 		
 			// 分類
-			driver.wait(until.elementLocated(By.xpath('//*[@id="mainhtml"]/div/div[1]/div[2]/div/div[2]/ol/div/ul/li[contains(text(),"'+rows[i].class+'")]'))).then((ele) => {
+			driver.wait(until.elementLocated(By.xpath('//*[@id="mainhtml"]/div/div[1]/div[2]/div/div[2]/ol/div/ul/li[contains(text(), "'+rows[i].class+'")]'))).then((ele) => {
 				ele.click().then(() => {
 					driver.wait(until.elementLocated(By.css('#btnNext'))).then((ele) => {
 						ele.click();
@@ -211,9 +216,9 @@ function prepareLaunch(rows, index) {
 				});
 			});
 
+
 			// 品牌
 			driver.wait(until.elementLocated(By.css('#information_c > div:nth-child(1) > ul > li:nth-child(3) > abbr > div'))).then((ele) => {
-				console.log("- 填入品牌。");
 				ele.click().then(() => {
 					driver.wait(until.elementLocated(By.xpath('//*[@id="information_c"]/div[1]/ul/li[3]/abbr/div/div/ul/li[contains(text(), "'+rows[i].brand+'")]'))).then((ele) => {
 						driver.executeScript("arguments[0].click()", ele);
@@ -224,17 +229,24 @@ function prepareLaunch(rows, index) {
 
 			// 商品名稱
 			driver.wait(until.elementLocated(By.css('#ctl00_contentHolder_txtProductName'))).then((ele) => {
-				console.log("- 填入商品名稱。");
 				//driver.executeScript("arguments[0].value = arguments[1]", ele, rows[i].name);
 				ele.sendKeys(rows[i].name);
 			});
 
 
-			// 一口價 #ctl00_contentHolder_txtSalePrice
-			driver.wait(until.elementLocated(By.css('#ctl00_contentHolder_txtSalePrice'))).then((ele) => {
-				console.log("- 填入價格。");
-				driver.executeScript("arguments[0].value = arguments[1];", ele, rows[i].price);
+			// 供貨價 #ctl00_contentHolder_txtCostPrice
+			driver.wait(until.elementLocated(By.css('#ctl00_contentHolder_txtCostPrice'))).then((ele) => {
+				let price = Number(rows[i].price) - 1;
+				driver.executeScript("arguments[0].value = arguments[1];", ele, price);
 			});
+			// 商品庫存 #ctl00_contentHolder_txtStock
+			// driver.wait(until.elementLocated(By.xpath('//*[@id="information_c"]/div[3]/ul/li[5]/input'))).then((ele) => {
+			// 	ele.sendKeys("1");
+			// });
+			driver.wait(until.elementLocated(By.xpath('//*[@id="information_c"]/div[3]/ul/li[5]/input'))).then((ele) => {
+				driver.executeScript("arguments[0].value = 1000", ele);
+			});
+
 
 			// 商品庫存 #ctl00_contentHolder_txtStock
 			driver.wait(until.elementLocated(By.css('#ctl00_contentHolder_txtStock'))).then((ele) => {
@@ -249,7 +261,7 @@ function prepareLaunch(rows, index) {
 			});
 
 			//
-			driver.wait(until.elementLocated(By.css('#mainhtml > div > div > div > div > h2'))).then((ele) => {
+			driver.wait(until.elementLocated(By.css('#btnSearch'))).then((ele) => {
 				console.log("上架完成");
 				writeInSheet((i+1), "D", function() {
 					driver.sleep(2000);
@@ -259,7 +271,5 @@ function prepareLaunch(rows, index) {
 				});
 			});
 		}
-
 	}
-
 }

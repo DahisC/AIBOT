@@ -98,6 +98,12 @@ io.on('connection', function(socket) {
 		xapp.launch();
 	});
 
+	socket.on('xappLaunch2', () => {
+		var xapp_provider = require('./XAPP/xapp_provider.js');
+		xapp_provider.launch();
+	});
+
+
 });
 
 // 
