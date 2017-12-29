@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DailyGo Launch Bot</title>
+
+	<link rel="stylesheet" href="bootstrap.css" type="text/css"/>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+		var socket = io();
+	</script>
+
+	<style>
+		button {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container-fluid">
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="col-md-3">
+					<button type="button" class="btn btn-link"><a href="https://goo.gl/GPYFEf" target="_blank">上架表單</a></button>
+				</div>
+				<div class="col-md-6">
+					<button id="btn_aiSearch" class="btn btn-danger">Search</button>	
+				</div>
+				<div class="col-md-6">
+					<button id="btn_aiLaunch" class="btn btn-danger">Luanch</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<script>
+		$('button#btn_aiSearch').click(() => {
+			socket.emit('aiSearch');
+		});
+
+		$('button#btn_aiLaunch').click(() => {
+			socket.emit('aiLaunch');
+		});
+	</script>
+
+</body>
+</html>

@@ -14,10 +14,10 @@ var chrome = require('selenium-webdriver/chrome');
 // configure browser options ...
 var options = new chrome.Options()
 	//options.addArguments("user-data-dir=D:/Bot/Default");
-	options.addArguments("user-data-dir=C:/Users/Dahis/AppData/Local/Google/Chrome/User Data/Default");
+	options.addArguments("user-data-dir=/Users/Dahis/Library/Application Support/Google/Chrome/Default");
 
 //var productDir = "D:/AIBOT/image/";
-var productDir = "C:/Users/Dahis/Desktop/AIBOT/XAPP/img/";
+var productDir = "/Users/Dahis/Desktop/AIBOT/XAPP/img/";
 /* ------------------------------------------------------------------------------------------------ */
 
 exports.launch = function() {
@@ -101,7 +101,7 @@ function writeInSheet(i, url, callback) {
 				var formula = '=HYPERLINK("'+url+'","商品頁面")';
 
 				console.log("將網址 "+url+" 寫入儲存格中...");
-				cell.setValue(formula, null);
+				cell.setValue("D", null);
 				callback();
 
 			});
@@ -193,6 +193,21 @@ function prepareLaunch(rows, index) {
 
 			console.log("上架中，啟動瀏覽器。");
 			driver.get('http://dailygobox.com/supplier/default.html');
+
+			console.log(rows[0]);
+
+			driver.wait(until.elementLocated(By.css('#txtAdminName'))).then((ele) => {
+				ele.sendKeys(rows[0].ad1).then(() => {
+					driver.wait(until.elementLocated(By.css('#txtAdminPassWord'))).then((ele) => {
+						ele.sendKeys(rows[0].ad2).then(() => {
+							driver.wait(until.elementLocated(By.css('#btnAdminLogin'))).then((ele) => {
+								ele.click();
+							});
+						});
+					});
+				});
+			});
+
 			driver.wait(until.elementLocated(By.css('div.xapp_logo'))).then(() => {
 				driver.wait(until.elementLocated(By.css('body > div.xapp_head > div > div.xapp_menu > a:nth-child(1)'))).then((ele) => {
 					ele.click().then(() => {
@@ -236,8 +251,7 @@ function prepareLaunch(rows, index) {
 
 			// 供貨價 #ctl00_contentHolder_txtCostPrice
 			driver.wait(until.elementLocated(By.css('#ctl00_contentHolder_txtCostPrice'))).then((ele) => {
-				let price = Number(rows[i].price) - 1;
-				driver.executeScript("arguments[0].value = arguments[1];", ele, price);
+				driver.executeScript("arguments[0].value = arguments[1];", ele, rows[i].pprice);
 			});
 			// 商品庫存 #ctl00_contentHolder_txtStock
 			// driver.wait(until.elementLocated(By.xpath('//*[@id="information_c"]/div[3]/ul/li[5]/input'))).then((ele) => {

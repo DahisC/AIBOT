@@ -21,6 +21,10 @@ app.get('/dailygo', function(req, res) {
 	res.sendFile(__dirname + '/dailygo.html');
 });
 
+app.get('/aitec', function(req, res) {
+	res.sendFile(__dirname + '/aitec.html');
+});
+
 http.listen(port, function() {
 	console.log("Server started on port: "+port);
 });
@@ -103,6 +107,16 @@ io.on('connection', function(socket) {
 		xapp_provider.launch();
 	});
 
+	// // --------------- Ai-Tec OW -----------------
+	socket.on('aiSearch', () => {
+		var aiow_search = require('./AITEC/aiow_search.js');
+		aiow_search.start();
+	});
+
+	socket.on('aiLaunch', () => {
+		var aiow_launch = require('./AITEC/aiow_launch.js');
+		aiow_launch.start();
+	});
 
 });
 
