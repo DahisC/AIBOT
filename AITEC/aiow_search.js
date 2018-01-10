@@ -144,7 +144,7 @@ function search(rows, index) {
 				img9 = "http:"+img9;
 
 			var sourceCode = $('div.content').html();
-				sourceCode = sourceCode.trim();
+				if (sourceCode !== null) { sourceCode = sourceCode.trim(); }
 
 			var product = new productObj(name, price, des1, des2, p_from, p_warranty, p_time, img1, img2, img3, img4, img5, img6, img7, img8, img9, sourceCode);
 

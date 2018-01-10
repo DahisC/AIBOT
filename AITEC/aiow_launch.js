@@ -249,7 +249,7 @@ function prepareLaunch(rows, index) {
 				yahooClass2 = "影音/視聽/MP3";
 				yahooClass3 = "其他影音設備";
 				//
-			} else if (rows[i].class == '電腦資訊' || rows[i].class == '科技潮物') {
+			} else if (rows[i].class == '電腦資訊' || rows[i].class == '科技潮物' || rows[i].class == '虛擬實境' || rows[i].class == '現貨特惠區') {
 				rutenClass1 = "電腦、電子、周邊";
 				rutenClass2 = "代買、海外代購";
 
@@ -268,7 +268,7 @@ function prepareLaunch(rows, index) {
 				rutenClass2 = "國際代購/代買";
 
 				yahooClass1 = "美容保養與彩妝";
-				yahooClass2 = "其他"
+				yahooClass2 = "其他";
 			}
 				//
 			// } else { // 科技潮物
@@ -798,9 +798,10 @@ function prepareLaunch(rows, index) {
 								driver.wait(until.elementLocated(By.css('li#htmlMode'))).then((ele) => {
 									driver.sleep(1000);
 									console.log("儲存 HTML");
-									ele.click().then(() => {
-										checkImage();
-									});
+									checkImage();
+									// ele.click().then(() => {
+									// 	checkImage();
+									// });
 								});
 							});
 						});
@@ -1250,10 +1251,193 @@ function prepareLaunch(rows, index) {
 					ele.sendKeys(productDir+"image1.png");
 				});
 
-				// 商品名稱
-				driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[1]/div[1]/div[2]/div[1]/div[2]/input'))).then((ele) => {
-					driver.executeScript("arguments[0].value = arguments[1]", ele, '【'+rows[i].num+'】'+rows[i].name+'【Ai-Tec】');
+				// div.image-manager__item input[type="file"]
+
+				//上傳圖片
+				driver.wait(until.elementLocated(By.css('div.image-manager__item input[type="file"]'))).then((ele) => {
+					if (rows[i].img2.indexOf('undefined') <= -1) {
+						driver.sleep(500);
+						ele.sendKeys(productDir+'image2.png').then(() => {
+							if (rows[i].img3.indexOf('undefined') <= -1) {
+								driver.sleep(500);
+								ele.sendKeys(productDir+'image3.png').then(() => {
+									if (rows[i].img4.indexOf('undefined') <= -1) {
+										driver.sleep(500);
+										ele.sendKeys(productDir+'image4.png').then(() => {
+											if (rows[i].img5.indexOf('undefined') <= -1) {
+												driver.sleep(500);
+												ele.sendKeys(productDir+'image5.png').then(() => {
+													if (rows[i].img6.indexOf('undefined') <= -1) {
+														driver.sleep(500);
+														ele.sendKeys(productDir+'image6.png').then(() => {
+															if (rows[i].img7.indexOf('undefined') <= -1) {
+																driver.sleep(500);
+																ele.sendKeys(productDir+'image7.png').then(() => {
+																	if (rows[i].img8.indexOf('undefined') <= -1) {
+																		driver.sleep(500);
+																		ele.sendKeys(productDir+'image8.png').then(() => {
+																			if (rows[i].img9.indexOf('undefined') <= -1) {
+																				driver.sleep(500);
+																				ele.sendKeys(productDir+'image9.png').then(() => {
+																					// if (rows[i].img9.indexOf('undefined') <= -1) {
+																					// 	ele.sendKeys(productDir+'image9.png');
+																					// }
+																				});
+																			}
+																		});
+																	}
+																});
+															}
+														});
+													}
+												});
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+
+					console.log("- 上傳圖片");
 				});
+
+				// 商品名稱 //*[@id="shopee-powerseller-root"]/div/div[3]/form/div[1]/div[1]/div[2]/div[1]/div[2]/input
+				driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[1]/div[1]/div[2]/div[1]/div[2]/input'))).then((ele) => {
+					//driver.executeScript("arguments[0].value = arguments[1]", ele, '【'+rows[i].num+'】'+rows[i].name+'【Ai-Tec】');
+					ele.sendKeys('【'+rows[i].num+'】'+rows[i].name+'【Ai-Tec】');
+					console.log(" - 填入商品名稱")
+				});
+
+				var spcode = "歡迎來到 Ai-Tec 智瑞科技\n\n因為品項眾多，無法即時更新庫存狀態，煩請下標前先詢問是否有現貨喔！\n\n\n本店售出物品，除非特價品或二手品，均附 3 個月保固\n\n期間有非人為損壞，將更換良品或免費維修。超出期限或人為損壞，則酌收運費、維修費與處理費。\n\n參考更多本店商品：#aitec\n\n歡迎 FB 搜尋「 Ai Tec 」，關注粉絲團！\n\n\n";
+
+				spcode = spcode + "下標與運送：\n\n下標前叮嚀：因為庫存狀況不一，下標前可用聊聊確認是否還有現貨。\n\n寄 送 時 間：所有現貨商品將會於下標後 3 個工作天內寄出。\n\n預購與代訂：若商品無現貨，則會於客戶下標後即刻自國外訂購，會先預估抵達時間，惟具體時間以實際為準。\n\n退貨或換貨：若商品於到貨後本身有瑕疵(非人為因素造成)，我們將受理退貨或換新品之要求。\n\n商品猶豫期：商品到貨後七天內您享有商品猶豫期，但只限於商品包裝保持未拆封且未使用的情況下。\n\n\n海外運送：\n\n海外直寄商品下單後，包裹收件人將為商品進口人，須遵守台灣海關所有商品進口相關法令規定。臺灣海關對於金額超過 NT$ 3000 的進口包裹將有可能徵收進口關稅、貨物稅、營業稅，消費者需自行負擔此項費用。\n\n本店沒有辦法預先掌握或控制可能產生之相關費用，消費者需自行與台灣海關聯絡確認相關細節。如果臺灣海關對您的包裹要求徵收稅費，物流公司會與您聯繫，並請您提供個人相關文件進行報關，包含您的身分證正反面影本﹑個案委任書﹑與NCC自用切結書，並在清關完成交付包裹時，向您收取相關稅費。 （關於商品報關所需文件，可跟本店聯繫，本店會盡力協助提供）\n\n若您不願意或無法提供資料，請勿下標訂購。 若您已購買，且物品已寄送；但您不願意提供資料協助清關，恕無法辦理退貨退款，同時您須自行負擔海關可能收取的滯納金與未清關罰款。"
+
+				// 描述 //*[@id="shopee-powerseller-root"]/div/div[3]/form/div[1]/div[2]/div[2]/div[1]/div[2]/div/div/textarea
+				driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[1]/div[2]/div[2]/div[1]/div[2]/div/div/div'))).then((ele) => {
+					console.log("1");
+					ele.click().then(() => {
+						//driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div[1]/div[4]/form/div[1]/div[2]/div[2]/div[1]/div[2]/div/div'))).then((ele) => {
+							//console.log("2");
+							//ele.click().then(() => {
+								driver.wait(until.elementLocated(By.css('div textarea'))).then((ele) => {
+									console.log("3");
+									driver.executeScript("arguments[0].value = arguments[1]", ele, spcode);
+								});
+							//});
+						//});
+					});
+				});
+				
+
+				// 分類寫死為其他
+				driver.wait(until.elementLocated(By.css('div.scs-label'))).then((ele) => {
+					driver.sleep(500);
+					ele.click().then(() => {
+						driver.wait(until.elementLocated(By.css('div.col.category-panel:nth-child(1) div:nth-child(22)'))).then((ele) => {
+							driver.sleep(500);
+							//driver.executeScript("arguments[0].click()", ele);
+							ele.click().then(() => {
+								driver.sleep(500);
+								driver.wait(until.elementLocated(By.css('div.col.category-panel:nth-child(2) div:nth-child(5)'))).then((ele) => {
+									ele.click();
+								});
+							});
+						});
+					});
+				});
+
+				// 品牌
+
+				driver.wait(until.elementLocated(By.xpath('//*[@id="product-attributes"]/div/div[2]/div[2]/div/div/div[1]'))).then((ele) => {
+					driver.sleep(500);
+					ele.click().then(() => {
+						driver.wait(until.elementLocated(By.xpath('//*[@id="product-attributes"]/div/div[2]/div[2]/div/div/div[3]/div/div/div[3]/form/a'))).then((ele) => {
+							driver.sleep(500);
+							ele.click().then(() => {
+								driver.wait(until.elementLocated(By.xpath('//*[@id="product-attributes"]/div/div[2]/div[2]/div/div/div[3]/div/div/div[3]/form/div[1]/div[2]/input'))).then((ele) => {
+									driver.sleep(500);
+									ele.sendKeys(rows[i].brand).then(() => {
+										driver.wait(until.elementLocated(By.xpath('//*[@id="product-attributes"]/div/div[2]/div[2]/div/div/div[3]/div/div/div[3]/form/div[2]'))).then((ele) => {
+											driver.sleep(500);
+											ele.click();
+											driver.sleep(2000);
+										});
+									});
+								});
+							});
+						});
+					});
+				});
+
+				// 價格
+				driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[3]/div[1]/div/div[1]/div[2]/div/div[3]/input'))).then((ele) => {
+					driver.sleep(1500);
+					ele.sendKeys(rows[i].price).then(() => {
+					// driver.executeScript("arguments[0].value = arguments[1]", ele, rows[i].price).click().then(() => {
+						driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[3]/div[1]/div/div[2]/div[2]/div/div[2]/input'))).then((ele) => {
+							driver.sleep(1500);
+							ele.clear();
+							ele.sendKeys(999).then(() => {
+							// driver.executeScript("arguments[0].value = arguments[1]", ele, 999).click().then(() => {
+								driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[4]/div[2]/div/div[2]/input'))).then((ele) => {
+									driver.sleep(1500);
+									ele.sendKeys(1);
+								});
+							});
+						});
+					});
+				});
+
+				// 數量 //*[@id="shopee-powerseller-root"]/div/div[3]/form/div[3]/div[1]/div/div[2]/div[2]/div/div[2]/input
+				// driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[3]/div[1]/div/div[2]/div[2]/div/div[2]/input'))).then((ele) => {
+				// 	driver.sleep(500);
+				// 	ele.clear();
+				// 	ele.sendKeys(999);
+				// });
+
+				// 重量 //*[@id="shopee-powerseller-root"]/div/div[3]/form/div[4]/div[2]/div
+				// driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[4]/div[2]/div/div[2]/input'))).then((ele) => {
+				// 	driver.sleep(500);
+				// 	ele.sendKeys(1);
+				// });
+
+				// 備貨 //*[@id="shopee-powerseller-root"]/div/div[3]/form/div[7]/div[1]/div[2]/div/div/div[2]/div
+				driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[7]/div[1]/div[2]/div/div/div[2]/div'))).then((ele) => {
+					driver.sleep(500);
+					ele.click();
+				});
+
+				// 確認 //*[@id="shopee-powerseller-root"]/div/div[3]/form/div[8]/div/div[1]
+				driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[3]/form/div[8]/div/div[1]'))).then((ele) => {
+					driver.sleep(500);
+					ele.click().then(() => {
+						driver.wait(until.elementLocated(By.css('div.product-items__item:nth-child(2)'))).then((ele) => {
+							writeInSheet(i+2, 'shopee', "done", function() {
+								driver.sleep(3000);
+								callback();
+							});
+							// driver.sleep(500);
+							// ele.click().then(() => {
+							// 	driver.wait(until.elementLocated(By.xpath('//*[@id="shopee-powerseller-root"]/div/div[4]/form/div[1]/div[1]/div[3]'))).then((ele) => {
+							// 		driver.getCurrentUrl().then((url) => {
+							// 			writeInSheet(i+2, 'shopee', url, function() {
+							// 				driver.sleep(3000);
+							// 				driver.quit();
+							// 				callback();
+							// 			});
+							// 		});
+							// 	});
+							// });
+						});
+					});
+				});
+
+				// driver.wait(until.elementLocated(By.css('div.product-items__item:nth-child(2)'))).then((ele) => {
+				// 	driver.sleep(500);
+				// 	ele.click();
+				// });
+				// 其他分類 //*[@id="shopee-powerseller-root"]/div/div[3]/form/div[1]/div[3]/div[2]/div/div[3]/div/div/div[2]/div/div[22]
 
 			} // func launchShopee
 
